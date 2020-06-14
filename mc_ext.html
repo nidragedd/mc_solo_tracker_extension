@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MC Solo Tracker Extension</title>
+	<script src="Chart.min.js"></script>
+	<script src="popup.js"></script>
+	<style>
+		 @font-face {
+            font-family: "Komika Title";
+            src: url("./fonts/KOMTIT__.ttf");
+        }
+		
+		.chart-container {
+			width: 500px;
+			margin-left: 40px;
+			margin-right: 40px;
+			margin-bottom: 40px;
+		}
+		.container {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+		
+		#villain_stat_title {
+			font-family: "Komika Title";
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+			border-style: solid; 
+			border-radius: 60px; 
+			border-width: 3px;
+			width: 500px;
+		}
+		.center {
+			text-align: center!important;
+			margin: auto;
+		}
+		.flex {
+			display: flex;
+		}
+		hr {
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+			border: 0;
+			border-top: 1px solid rgba(0,0,0,.1);
+		}
+		h1, h3, h4, h5 {
+			margin-bottom: .5rem;
+			font-weight: 500;
+			line-height: 1.2;
+		}
+		h1, h3 {
+			font-family: "Komika Title";
+		}
+		h4 {
+			font-size: 1.5rem;
+			margin-top: 0;
+		}
+		h5 {
+			font-size: 1.25rem;
+			margin-top: 0;
+		}
+		#villain_img {
+			vertical-align: middle;
+			border-style: none;
+			margin-top: .25rem;
+			margin-bottom: .25rem;
+			margin-left: 3rem;
+			margin-right: 1rem;
+			width: 100px;
+			height: 100px;
+		}
+		.a_scenario_anchor:link, .a_scenario_anchor:visited, .a_villain_anchor:link, .a_villain_anchor:visited {
+			font-family: Verdana;
+			font-size: 0.75em;
+			color: white;
+			padding: 0.75em 1em;
+			margin: .25rem .25rem 0;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+		}
+		.a_scenario_anchor:link, .a_scenario_anchor:visited {
+			background-color: #f44336;
+		}
+		.a_scenario_anchor:hover, .a_scenario_anchor:active {
+			background-color: red;
+		}
+		.a_villain_anchor:link, .a_villain_anchor:visited {
+			background-color: #cccccc;
+			color: #000;
+		}
+		.a_villain_anchor:hover, .a_villain_anchor:active {
+			background-color: #efefef;
+			color: #000;
+		}
+		
+		#villain_scenario_checklist, #villain_scenario_checklist_legend {
+			border-collapse: collapse;
+			margin: auto;
+		    border: solid 2px;
+		    border-width: 2px;
+			font-family: Verdana;
+			font-size: .75rem;
+		}
+		table th, table td {
+		  border: solid 1px;
+		  padding: 0.25rem;;
+		}
+		
+		
+		#villain_scenario_checklist th.standard {
+			background-color: #efefef;
+		}
+		#villain_scenario_checklist th.expert {
+			background-color: #cccccc;
+		}
+		td.aggression, td.justice, td.leadership, td.protection {
+			font-weight: bold;
+		}
+		td.aggression {
+			background-color: #c00;
+		}
+		td.leadership {
+			background-color: #3c78d8;
+		}
+		td.protection {
+			background-color: #93c47d;
+		}
+		td.justice {
+			background-color: #f1c232;
+		}
+		td.won {
+			background-color: #47c9a2;
+		}
+		td.lost {
+			background-color: #e85e6c;
+		}
+		td.no_play {
+			background-color: #efefef;
+		}
+		
+	</style>
+  </head>
+  <body>
+	<div id="last_updated"></div>
+    <h1 class="center">Statistiques générales</h1>
+	<div class="container">
+		<div class="chart-container"><canvas id="AllVillainsData"></canvas></div>
+		<div class="chart-container"><canvas id="AllHeroesData"></canvas></div>
+	</div>
+	<hr />
+	<h1 class="center">Statistiques des méchants</h1>
+	<div id="villains_link" style="margin:auto; width:80%; text-align: center;"></div>
+	<div id="villains_scenarios_link" style="margin:auto; width:80%; text-align: center;"></div>
+	
+	<div id="villain_stat_title" class="center">
+		<div class="center flex">
+			<img id="villain_img" src="./images/villains/v0.jpg">
+			<div class="center"><h4 id="villain_name">Choisissez un méchant</h4><h5 id="scenario_name">Choisissez un scénario</h5></div>
+		</div>
+	</div>
+	
+	<h3 id="villain_stat_content" class="center"></h3>
+	<div id="villain_stat_container" class="container">
+		<div class="chart-container"><canvas id="VillainScenarioStdVsExpert"></canvas></div>
+		<div class="chart-container"><canvas id="VillainScenarioHeroes"></canvas></div>
+		<div class="chart-container"><canvas id="VillainScenarioAspects"></canvas></div>
+	</div>
+	<div class="center">
+	<table id="villain_scenario_checklist"style="display:none;">
+		<tbody>
+		<tr>
+			<th rowspan="2">Héros</th>
+			<th rowspan="2">Combats</th>
+			<th colspan="4" class="standard">Standard</th>
+			<th colspan="4" class="expert">Expert</th>
+		</tr>
+		<tr>
+			<td class="aggression">Aggressivité</td><td class="leadership">Commandement</td><td class="justice">Justice</td><td class="protection">Protection</td>
+			<td class="aggression">Aggressivité</td><td class="leadership">Commandement</td><td class="justice">Justice</td><td class="protection">Protection</td>
+		</tr>
+		<tbody>
+	</table>
+	</div>
+	<div class="center">
+	<table id="villain_scenario_checklist_legend" style="display:none; margin-top:1em;">
+		<caption>Légende</caption>
+		<tbody>
+		<tr>
+			<td class="won"><img src="./images/won.png" /></td><td class="won">Ce scénario a été gagné au moins une fois avec ce héros dans ce mode et avec cet aspect.</td>
+		</tr>
+		<tr>
+			<td class="lost"><img src="./images/lost.png" /></td><td class="lost">Ce scénario n'a jamais été gagné avec ce héros dans ce mode et avec cet aspect.</td>
+		</tr>
+		<tr>
+			<td class="no_play">&nbsp;</td><td class="no_play">Ce scénario n'a jamais été joué avec ce héros.</td>
+		</tr>
+		<tbody>
+	</table>
+	<div>
+  </body>
+</html>
