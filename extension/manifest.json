@@ -12,9 +12,6 @@
   },
   "web_accessible_resources": ["injected.js"],
   "externally_connectable": {
-    "ids": [
-      "goepiphiciandildgamoidbagcamncmd"
-    ],
     "matches": ["https://marvelchampions.azurewebsites.net/*"]
   },
   "content_scripts": [
