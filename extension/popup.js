@@ -540,8 +540,6 @@ function show_global_heroes_stats() {
 			main_heroes_stats_l.push(per_hero_table[h_id]["losses"]);
 			main_heroes_labels.push(heroes[h_id]);
 		}
-		main_heroes_stats_w.push(per_hero_table[h_id]["wins"]);
-		main_heroes_stats_l.push(per_hero_table[h_id]["losses"]);
 	}
 	
 	var ctxMainHeroData = document.getElementById('AllHeroesData');	

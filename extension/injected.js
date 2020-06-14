@@ -4,7 +4,7 @@
 
 // To send a message from a 3rd party website we have to use the external Messaging API
 // Made with https://stackoverflow.com/questions/9106519/port-error-could-not-establish-connection-receiving-end-does-not-exist-in-chr
-chrome.runtime.sendMessage("hdjljlcjinegegkjbfabibjenjfndphn", {origin: "injected", data: localStorage['avancement'], params: localStorage['params']}, 
+chrome.runtime.sendMessage("goepiphiciandildgamoidbagcamncmd", {origin: "injected", data: localStorage['avancement'], params: localStorage['params']}, 
 	function(response) {
 		console.log(response.received);
 	}
