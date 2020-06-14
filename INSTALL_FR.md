@@ -1,0 +1,36 @@
+# MARVEL CHAMPIONS SOLO TRACKER STATS - CHROME EXTENSION - INSTALLATION GUIDE 
+---
+## LIRE ATTENTIVEMENT AVANT L'INSTALLATION
+Quelques précautions/rappels avant de procéder à l'installation de l'extension:
+* cette extension n'a été développée et testée que sous Windows 10 et Chrome 83. Elle ne fonctionne pas pour Firefox. Je ne sais pas si elle fonctionne sous Chrome Mac.
+* l'auteur du site de tracking [MC Solo Tracker](https://marvelchampions.azurewebsites.net/) préconise une utilisation sur mobile. Or cette extension est plutôt vouée à être utilisée sur un ordinateur. Si vous avez utilisé l'outil pour logger vos parties depuis votre mobile alors cette extension ne vous sera pas utile car il n'existe pas encore à ce jour de mécanisme de synchronisation entre vos différents appareils.
+* l'extension doit être utilisée sur le même ordinateur + navigateur que celui qui vous sert à saisir le résultat de vos parties solo
+* cette extension ne peut pas fonctionner en navigation privée
+* cette extension peut cesser de fonctionner du jour au lendemain en cas de mise à jour impactante dans la structure de données du site [MC Solo Tracker](https://marvelchampions.azurewebsites.net/)
+* les noms des méchants et scénarios sont en anglais, c'est ainsi qu'ils sont récupérés depuis le site de tracking
+
+**Note:** cette extension n'étant pas publiée sur le Chrome Web Store, il vous faut utiliser Chrome en mode développeur. Rien de bien grave, c'est très facile (cf. détails dans la procédure ci-dessous).
+Il y a toutefois un inconvénient un peu gênant: lors du lancement de Chrome, une popup peut apparaître pour vous suggérer de désactiver ce mode développeur. Il suffit alors de la fermer en cliquant sur la croix (**attention** de ne pas cliquer sur le bouton "Désactiver" !).
+![](docs/install/warning_mode_dev.png)
+
+
+## COMMENT INSTALLER L'EXTENSION ?
+1. Téléchargez le zip de l'extension disponible [ici](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker.zip). (Autre option pour développeurs ou si vous voulez être certains du code qui est exécuté: vous pouvez cloner ce repository de code et aller directement à l'étape 3).
+2. Dézippez quelque part sur votre ordinateur:
+![](docs/install/install_step1.jpg)
+![](docs/install/install_step2.jpg)
+
+3. Ouvrez un nouvel onglet dans chrome et saisissez dans la barre d'adresse: chrome://extensions. Puis faites basculer le "mode développeur" afin de pouvoir visualiser le bouton "Charger l'extension non empaquetée".
+![](docs/install/install_step3.jpg)
+
+4. Naviguez jusqu'au dossier racine de l'extension. Puis cliquez sur "Sélectionner un dossier".
+![](docs/install/install_step4.jpg)
+
+5. Si tout s'est bien passé, il devrait y avoir la petite icône Spiderman en haut et cette extension affichée:
+![](docs/install/install_step5.jpg)
+
+6. Cliquez sur l'icône Spiderman, cela devrait afficher un message indiquant que les données ne sont pas disponibles. En effet, celles-ci ne sont synchronisées que lorsque le site [MC Solo Tracker](https://marvelchampions.azurewebsites.net/) est visité avec cette extension installée.
+![](docs/install/install_step6.jpg)
+
+7. Visitez le site de tracking [MC Solo Tracker](https://marvelchampions.azurewebsites.net/) puis recliquez sur l'icône Spiderman. Cette fois-ci, les données devraient avoir été chargées correctement et la popup devrait afficher des statistiques.
+![](docs/install/install_step7.jpg)
