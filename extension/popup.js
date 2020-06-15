@@ -157,11 +157,6 @@ function display_villains_title(villain_id) {
 	document.getElementById('villain_img').src = './images/villains/' + villain_id + '.png';
 	
 	insert_text('scenario_name', 'Choisissez un scénario');
-	show_element('villain_stat_content', false);
-	show_element('villain_stat_container', false);
-	clean_villains_charts();
-	show_element('villain_scenario_checklist', false);
-	show_element('villain_scenario_checklist_legend', false);
 }
 function display_scenario_title(scenario_id) {
 	scenario_name = scenarios[scenario_id];
@@ -174,7 +169,7 @@ Init all villains list with a link and a dedicated event listener
 function init_villains_link() {
 	content = '';
 	for (const [key, value] of Object.entries(villains)) {
-		content += '<a href="#" id="vid_' + key + '" class="a_villain_anchor">' + value + '</a>';
+		content += '<a name="villains_anchors" href="#villains_anchors" id="vid_' + key + '" class="a_villain_anchor">' + value + '</a>';
 	}
 	set_html_content('villains_link', content);
 	
@@ -188,6 +183,11 @@ function init_villains_link() {
 			display_villains_title(villain_id);
 			
 			init_scenarios_link(event.srcElement.id);
+			
+			//Addon
+			// Empty hero table
+			reinit_hero_table('villain_scenario_checklist');
+			display_stats_villains_scenario(villain_id);
 		});
 	}
 }
@@ -198,7 +198,7 @@ Init all scenarios with a link and a dedicated event listener
 function init_scenarios_link(villain_id) {
 	content = '';
 	for (const [key, value] of Object.entries(scenarios)) {
-		content += '<a href="#" id="sid_' + key + '_' + villain_id + '" class="a_scenario_anchor">' + value + '</a>';
+		content += '<a href="#villains_anchors" id="sid_' + key + '_' + villain_id + '" class="a_scenario_anchor">' + value + '</a>';
 	}
 	set_html_content('villains_scenarios_link', content);
 	
@@ -227,8 +227,19 @@ Here goes the main logic to display stats for a given tuple Villain + Scenario
 */
 function display_stats_villains_scenario(villain_id, scenario_id) {
 	displayContent = '';
-	if (per_villain_table[villain_id][scenario_id]["counter"] > 0) {
-		displayContent += 'Ce scénario a été joué ' + per_villain_table[villain_id][scenario_id]["counter"] + ' fois !';
+	root_element = per_villain_table[villain_id];
+	txt = 'méchant';
+	
+	// Clean charts made with previous call
+	clean_villains_charts();
+
+	if (scenario_id) {
+		root_element = root_element[scenario_id];
+		txt = 'scénario';
+	}
+	
+	if (root_element["counter"] > 0) {
+		displayContent += 'Ce ' + txt + ' a été joué ' + root_element["counter"] + ' fois !';
 		displayContent += '<br />';
 		
 		show_chart_villain_scenario_mode(villain_id, scenario_id);
@@ -238,12 +249,14 @@ function display_stats_villains_scenario(villain_id, scenario_id) {
 		
 		display_hero_checklist_table(villain_id, scenario_id);
 	} else {
-		displayContent += "Ce scénario n'a pas encore été joué ! En avant !";
+		displayContent += "Ce " + txt + " n'a pas encore été joué ! En avant !";
 		show_element('villain_scenario_checklist', false);
 		show_element('villain_scenario_checklist_legend', false);
 		show_element('villain_stat_container', false);
-		clean_villains_charts();
 	}
+	insert_text('span_won_type', txt);
+	insert_text('span_lost_type', txt);
+	insert_text('span_no_play_type', txt);
 	
 	// Update the div element that contains the stats
 	set_html_content('villain_stat_content', displayContent);
@@ -258,9 +271,16 @@ Handling the Heroes checklist:
 */
 function display_hero_checklist_table(villain_id, scenario_id) {
 	row_id = 1;
+	
+	root_element = per_villain_table[villain_id];
+	if (scenario_id) {
+		root_element = root_element[scenario_id];
+		txt = 'scénario';
+	}
+	
 	for (const a_hero of Object.keys(heroes)) {
 		// If this hero has been played at least once against this villain + scenario
-		nb_games = per_villain_table[villain_id][scenario_id]["heroes_count"][a_hero];
+		nb_games = root_element["heroes_count"][a_hero];
 		if (nb_games > 0) {
 			vals = [];
 			vals.push(a_hero);
@@ -269,10 +289,10 @@ function display_hero_checklist_table(villain_id, scenario_id) {
 			// Get for standard per aspect, then expert
 			for (let mode of ['standard', 'expert']) {
 				for (let aspect of ['aggression', 'leadership', 'justice', 'protection']) {
-					nb_played = per_villain_table[villain_id][scenario_id][mode][a_hero][aspect]["counter"];
+					nb_played = root_element[mode][a_hero][aspect]["counter"];
 					// Played this mode and aspect ?
 					if (nb_played > 0) {
-						won = per_villain_table[villain_id][scenario_id][mode][a_hero][aspect]["wins"];
+						won = root_element[mode][a_hero][aspect]["wins"];
 						if (won > 0) {
 							// 2 means this villain + scenario was once beaten in this mode by this hero with this aspect
 							vals.push(2);
@@ -339,10 +359,17 @@ function show_chart_villain_scenario_mode(villain_id, scenario_id) {
 	var data_1 = [];
 	var data_2 = [];
 	
-	data_1.push(per_villain_table[villain_id][scenario_id]["standard"]["wins"]);
-	data_2.push(per_villain_table[villain_id][scenario_id]["standard"]["losses"]);
-	data_1.push(per_villain_table[villain_id][scenario_id]["expert"]["wins"]);
-	data_2.push(per_villain_table[villain_id][scenario_id]["expert"]["losses"]);
+	if (scenario_id) {
+		data_1.push(per_villain_table[villain_id][scenario_id]["standard"]["wins"]);
+		data_2.push(per_villain_table[villain_id][scenario_id]["standard"]["losses"]);
+		data_1.push(per_villain_table[villain_id][scenario_id]["expert"]["wins"]);
+		data_2.push(per_villain_table[villain_id][scenario_id]["expert"]["losses"]);
+	} else {
+		data_1.push(per_villain_table[villain_id]["standard"]["wins"]);
+		data_2.push(per_villain_table[villain_id]["standard"]["losses"]);
+		data_1.push(per_villain_table[villain_id]["expert"]["wins"]);
+		data_2.push(per_villain_table[villain_id]["expert"]["losses"]);
+	}
 	
 	var ctxVillainScenarioStdVsExpert = document.getElementById('VillainScenarioStdVsExpert');
 	VillainScenarioStdVsExpertChart = new Chart(ctxVillainScenarioStdVsExpert, {
@@ -386,7 +413,12 @@ function show_chart_villain_played_heroes(villain_id, scenario_id) {
 	var heroes_played_labels = [];
 	var heroes_played_labels_count = [];
 	
-	for (const [key, value] of Object.entries(per_villain_table[villain_id][scenario_id]["heroes_count"])) {
+	root_element = per_villain_table[villain_id];
+	if (scenario_id) {
+		root_element = root_element[scenario_id];
+	}
+	
+	for (const [key, value] of Object.entries(root_element["heroes_count"])) {
 		if (value > 0) {
 			heroes_played_labels.push(heroes[key]);
 			heroes_played_labels_count.push(value);
@@ -437,9 +469,14 @@ function show_chart_villain_played_aspects(villain_id, scenario_id) {
 	var aspects_played_labels = [];
 	var aspects_played_labels_count = [];
 	
+	root_element = per_villain_table[villain_id];
+	if (scenario_id) {
+		root_element = root_element[scenario_id];
+	}
+	
 	for (let aspect of ['justice', 'leadership', 'aggression', 'protection']) {
 		aspects_played_labels.push(aspect);
-		aspects_played_labels_count.push(per_villain_table[villain_id][scenario_id]["aspects_count"][aspect]);
+		aspects_played_labels_count.push(root_element["aspects_count"][aspect]);
 	}
 	
 	var ctxVillainScenarioAspects = document.getElementById('VillainScenarioAspects');
