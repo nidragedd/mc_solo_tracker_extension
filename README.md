@@ -21,11 +21,14 @@ The [MC Solo Tracker](https://marvelchampions.azurewebsites.net/) website stores
 
 ## DEVICE COMPATIBILITY
 Tested only on Windows 10 and Chrome 83. As we say in IT: "it works on my machine !".
-This extension does not work on Firefox.
+Obviously, this Chrome extension **does not work on Firefox**.
 
 ## CREDITS
 * I would like to thanks the owner of [MC Solo Tracker](https://marvelchampions.azurewebsites.net/) who is nicely giving us access to a wonderful logging solution.
 * I have been inspired by [SuperHuman Registration Act](https://superhumanregistrationact.com/) website for few parts of the design (the komica font for instance).
+* Few free pictures have been used in this extension:
+	* Spiderman Icon: https://icon-library.net/icon/spiderman-icon-15.html
+	* Anonymous Icon: https://icon-library.net/icon/anonymous-icon-png-6.html
 
 ## RESOURCES
 It was the first time I built a Chrome extension. Those resources were very helpful:
@@ -33,3 +36,6 @@ It was the first time I built a Chrome extension. Those resources were very help
 * [Developer documentation for Chrome](https://developer.chrome.com/apps/runtime)
 * [Sending message from injected content script to the background page](https://stackoverflow.com/questions/9106519/port-error-could-not-establish-connection-receiving-end-does-not-exist-in-chr)
 * [Kind of tutorial "How to start?"](https://thoughtbot.com/blog/how-to-make-a-chrome-extension)
+
+## INSTALLATION GUIDES
+* [French version](INSTALL_FR.md)

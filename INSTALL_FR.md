@@ -15,7 +15,7 @@ Il y a toutefois un inconvénient un peu gênant: lors du lancement de Chrome, une
 
 
 ## COMMENT INSTALLER L'EXTENSION ?
-1. Téléchargez le zip de l'extension disponible [ici](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker.zip). (Autre option pour développeurs ou si vous voulez être certains du code qui est exécuté: vous pouvez cloner ce repository de code et aller directement à l'étape 3).
+1. Téléchargez le zip de la dernière version de l'extension disponible [ici](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.2.zip). (Autre option pour développeurs ou si vous voulez être certains du code qui est exécuté: vous pouvez cloner ce repository de code et aller directement à l'étape 3).
 2. Dézippez quelque part sur votre ordinateur:
 ![](docs/install/install_step1.jpg)
 ![](docs/install/install_step2.jpg)
@@ -34,3 +34,21 @@ Il y a toutefois un inconvénient un peu gênant: lors du lancement de Chrome, une
 
 7. Visitez le site de tracking [MC Solo Tracker](https://marvelchampions.azurewebsites.net/) puis recliquez sur l'icône Spiderman. Cette fois-ci, les données devraient avoir été chargées correctement et la popup devrait afficher des statistiques.
 ![](docs/install/install_step7.jpg)
+
+
+## INSTALLER UNE NOUVELLE VERSION DE L'EXTENSION
+| Version | Lien | Description                                                                                                                                                                                      |
+|---------|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0.1     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker.zip)      | Version initiale, contient les statistiques pour chaque couple méchant+scénario                                                                                                                  |
+| 0.2     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.2.zip) | Ajout des statistiques similaires pour chaque méchant (sans devoir filtrer sur un scénario) Correction de l'effet désagréable sur la sélection de méchant ou scénario (remontée en haut de page) |
+
+Procédé:
+1. Téléchargez le zip correspondant à la version souhaitée et dézippez le quelque part sur votre ordinateur, tout comme pour l'installation de base.
+
+2. Ouvrez un nouvel onglet dans chrome et saisissez dans la barre d'adresse: chrome://extensions. Vous pouvez alors supprimer l'extension déjà installée:
+![](docs/install/upgrade_delete_previous.png)
+
+3. Suivez la procédure classique d'installation, cette fois-ci en choissisant le dossier contenant la nouvelle version de l'extension.
+
+**Pas de panique !**: si jamais cette manipulation échoue, supprimez l'extension de Chrome ainsi que tous les dossiers contenant les différentes versions de l'extension puis recommencez la procédure de base.  
+**Aucune** donnée n'étant sauvegardée directement dans l'extension, vous ne pouvez pas perdre votre progression qui reste, quant à elle, stockée sur le site de tracking [MC Solo Tracker](https://marvelchampions.azurewebsites.net/).
