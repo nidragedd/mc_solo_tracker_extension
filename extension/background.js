@@ -148,10 +148,10 @@ function init_villains_scenarios_table(item, index) {
 					per_villain_table[item][a_scenario][mode][a_hero][aspect]["counter"] = 0;
 					per_villain_table[item][a_scenario][mode][a_hero][aspect]["wins"] = 0;
 					per_villain_table[item][a_scenario][mode][a_hero][aspect]["losses"] = 0;
-					per_villain_table[item][a_scenario][aspect] = {};
-					per_villain_table[item][a_scenario][aspect]["counter"] = 0;
-					per_villain_table[item][a_scenario][aspect]["wins"] = 0;
-					per_villain_table[item][a_scenario][aspect]["losses"] = 0;
+					per_villain_table[item][a_scenario][mode][aspect] = {};
+					per_villain_table[item][a_scenario][mode][aspect]["counter"] = 0;
+					per_villain_table[item][a_scenario][mode][aspect]["wins"] = 0;
+					per_villain_table[item][a_scenario][mode][aspect]["losses"] = 0;
 					
 					// Overall scenarios
 					per_villain_table[item]["aspects_count"][aspect] = 0;
@@ -159,10 +159,10 @@ function init_villains_scenarios_table(item, index) {
 					per_villain_table[item][mode][a_hero][aspect]["counter"] = 0;
 					per_villain_table[item][mode][a_hero][aspect]["wins"] = 0;
 					per_villain_table[item][mode][a_hero][aspect]["losses"] = 0;
-					per_villain_table[item][aspect] = {};
-					per_villain_table[item][aspect]["counter"] = 0;
-					per_villain_table[item][aspect]["wins"] = 0;
-					per_villain_table[item][aspect]["losses"] = 0;
+					per_villain_table[item][mode][aspect] = {};
+					per_villain_table[item][mode][aspect]["counter"] = 0;
+					per_villain_table[item][mode][aspect]["wins"] = 0;
+					per_villain_table[item][mode][aspect]["losses"] = 0;
 				}
 			}
 		}
@@ -185,12 +185,14 @@ function add_fight_in_tables(item, index) {
 	
 	// Update overall counters for this scenario
 	per_villain_table[the_villain][the_scenario][the_mode][the_hero][the_aspect]["counter"] += 1;
+	per_villain_table[the_villain][the_scenario][the_mode][the_aspect]["counter"] += 1;
 	per_villain_table[the_villain][the_scenario][the_mode][the_hero]["counter"] += 1;
 	per_villain_table[the_villain][the_scenario][the_mode]["counter"] += 1;
 	per_villain_table[the_villain][the_scenario]["counter"] += 1;
 	
 	// Per villain
 	per_villain_table[the_villain][the_mode][the_hero][the_aspect]["counter"] += 1;
+	per_villain_table[the_villain][the_mode][the_aspect]["counter"] += 1;
 	per_villain_table[the_villain][the_mode][the_hero]["counter"] += 1;
 	per_villain_table[the_villain][the_mode]["counter"] += 1;
 	per_villain_table[the_villain]["counter"] += 1;
@@ -203,12 +205,14 @@ function add_fight_in_tables(item, index) {
 	}
 	// Update wins/losses counter
 	per_villain_table[the_villain][the_scenario][the_mode][the_hero][the_aspect][key_to_upd] += 1;
+	per_villain_table[the_villain][the_scenario][the_mode][the_aspect][key_to_upd] += 1;
 	per_villain_table[the_villain][the_scenario][the_mode][the_hero][key_to_upd] += 1;
 	per_villain_table[the_villain][the_scenario][the_mode][key_to_upd] += 1;
 	per_villain_table[the_villain][the_scenario][key_to_upd] += 1;
 	
 	// Per villain
 	per_villain_table[the_villain][the_mode][the_hero][the_aspect][key_to_upd] += 1;
+	per_villain_table[the_villain][the_mode][the_aspect][key_to_upd] += 1;
 	per_villain_table[the_villain][the_mode][the_hero][key_to_upd] += 1;
 	per_villain_table[the_villain][the_mode][key_to_upd] += 1;
 	per_villain_table[the_villain][key_to_upd] += 1;

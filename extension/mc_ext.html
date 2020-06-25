@@ -141,6 +141,16 @@
 			background-color: #efefef;
 		}
 		
+		#villain_scenario_checklist td.won, #villain_scenario_checklist td.lost {
+			font-style: italic;
+			font-size: smaller;
+		}
+		#villain_scenario_checklist td.won {
+			color: teal;
+		}
+		#villain_scenario_checklist td.lost {
+			color: brown;
+		}									   
 	</style>
   </head>
   <body>
@@ -172,14 +182,18 @@
 		<table id="villain_scenario_checklist"style="display:none;">
 			<tbody>
 			<tr>
-				<th rowspan="2">Héros</th>
-				<th rowspan="2">Combats</th>
+				<th rowspan="3">Héros</th>
+				<th rowspan="3">Combats</th>
 				<th colspan="4" class="standard">Standard</th>
 				<th colspan="4" class="expert">Expert</th>
 			</tr>
 			<tr>
 				<td class="aggression">Aggressivité</td><td class="leadership">Commandement</td><td class="justice">Justice</td><td class="protection">Protection</td>
 				<td class="aggression">Aggressivité</td><td class="leadership">Commandement</td><td class="justice">Justice</td><td class="protection">Protection</td>
+			</tr>
+			<tr>
+				<td class="aggression" id="agstd"></td><td class="leadership" id="leadstd"></td><td class="justice" id="juststd"></td><td class="protection" id="protstd"></td>
+				<td class="aggression" id="agexp"></td><td class="leadership" id="leadexp"></td><td class="justice" id="justexp"></td><td class="protection" id="protexp"></td>
 			</tr>
 			<tbody>
 		</table>
@@ -195,7 +209,7 @@
 				<td class="lost"><img src="./images/lost.png" /></td><td class="lost">Ce <span id="span_lost_type">scénario</span> n'a jamais été gagné avec ce héros dans ce mode et avec cet aspect.</td>
 			</tr>
 			<tr>
-				<td class="no_play">&nbsp;</td><td class="no_play">Ce <span id="span_no_play_type">scénario</span> n'a jamais été joué avec ce héros.</td>
+				<td class="no_play">&nbsp;</td><td class="no_play">Ce <span id="span_no_play_type">scénario</span> n'a jamais été joué avec ce héros dans ce mode et avec cet aspect.</td>
 			</tr>
 			<tbody>
 		</table>

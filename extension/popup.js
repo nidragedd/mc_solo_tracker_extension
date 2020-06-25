@@ -61,7 +61,6 @@ function display() {
 
 function showLastUpdated(last_update_date) {
 	var content = '';
-	console.log('in showLastUpdated last_update_date:' + last_update_date);
 	if (last_update_date != '') {
 		content = '<p><i>Dernier chargement des données: ' + last_update_date + '</i></p>'
 	} else {
@@ -73,14 +72,16 @@ function showLastUpdated(last_update_date) {
 /*
 Add a row in a table. Values are in the _vals_ array
 */
-function add_hero_row(table_id, vals, row_id) {
+function add_hero_row(table_id, vals, row_id, stats_per_aspect, win_rate_per_hero) {
 	var table_ref = document.getElementById(table_id);
 	var new_row = table_ref.insertRow(row_id);
 	idx = 0;
+	wr_counter = -1;
 	
 	for (const a_val of vals) {
 		var new_cell = new_row.insertCell(idx);
 		var new_txt;
+		var has_been_played = false;
 		if (idx == 0) {
 			new_txt = document.createElement("img");
 			new_txt.setAttribute("src", "./images/heroes/" + a_val + ".png");
@@ -99,14 +100,31 @@ function add_hero_row(table_id, vals, row_id) {
 					new_txt.setAttribute("src", "./images/won.png");
 					new_cell.setAttribute("class", "won");
 				}
+				
+				// Handle win rate per hero
+				has_been_played = true;
 			} else {
 				new_txt = document.createTextNode("");
 				new_cell.setAttribute("class", "no_play");
 			}
+			// Increment win rate counter as soon as we are in the "results" columns range
+			wr_counter++;
 		}
 		new_cell.appendChild(new_txt);
 		
+		// If played, we can show some stats
+		if (has_been_played == true) {
+			new_cell.appendChild(document.createElement("br"));
+			new_cell.appendChild(document.createTextNode(win_rate_per_hero[wr_counter]["nb_games"] + " (" + win_rate_per_hero[wr_counter]["wr"] + "%)"));
+		}
+		
 		idx++;
+	}
+	
+	// Update the count of games for each aspect+mode in table headers
+	var td_ids = ["agstd", "leadstd", "juststd", "protstd", "agexp", "leadexp", "justexp", "protexp"];
+	for (var k=0; k < td_ids.length; k++) {
+		insert_text(td_ids[k], stats_per_aspect[k]);
 	}
 }
 
@@ -116,8 +134,8 @@ Used to reinitialize the hero checklist table by removing all rows except the ta
 function reinit_hero_table(table_id) {
 	var table_ref = document.getElementById(table_id);
 	var rows_count = table_ref.rows.length;
-	while (table_ref.rows.length > 2) {
-		table_ref.deleteRow(2);
+	while (table_ref.rows.length > 3) {
+		table_ref.deleteRow(3);
 	}
 }
 
@@ -270,7 +288,7 @@ Handling the Heroes checklist:
 	- retrieve wins/losses per mode (standard/expert) and per aspect (justice/leadership/aggression/protection)
 */
 function display_hero_checklist_table(villain_id, scenario_id) {
-	row_id = 1;
+	row_id = 2;
 	
 	root_element = per_villain_table[villain_id];
 	if (scenario_id) {
@@ -286,6 +304,9 @@ function display_hero_checklist_table(villain_id, scenario_id) {
 			vals.push(a_hero);
 			vals.push(nb_games);
 			
+			stats_per_aspect = [];
+			win_rate_per_hero = [];
+			
 			// Get for standard per aspect, then expert
 			for (let mode of ['standard', 'expert']) {
 				for (let aspect of ['aggression', 'leadership', 'justice', 'protection']) {
@@ -300,16 +321,26 @@ function display_hero_checklist_table(villain_id, scenario_id) {
 							// 1 means this villain + scenario was played but never beaen in this mode by this hero with this aspect
 							vals.push(1);
 						}
+						
+						// Compute win rate for this hero
+						one_hero_stat = {};
+						one_hero_stat["nb_games"] = nb_played;
+						one_hero_stat["wr"] = Math.round(100 * (won/nb_played));
+						win_rate_per_hero.push(one_hero_stat);
 					} else {
 						// 0 means this villain + scenario was never played in this mode by this hero with this aspect
 						vals.push(0);
+						win_rate_per_hero.push(0);
 					}
+					
+					// Keep track of mode and aspect
+					stats_per_aspect.push(root_element[mode][aspect]["counter"]);
 				}
 			}
 			row_id ++;
 			
 			// Add a row in table
-			add_hero_row('villain_scenario_checklist', vals, row_id);
+			add_hero_row('villain_scenario_checklist', vals, row_id, stats_per_aspect, win_rate_per_hero);
 		}
 	}
 	
