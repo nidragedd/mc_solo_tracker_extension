@@ -55,6 +55,7 @@ function load_from_storage() {
 
 function display() {
 	init_villains_link();
+	init_heroes_link();
 	show_global_villains_pie();
 	show_global_heroes_stats();
 }
@@ -78,13 +79,20 @@ function add_hero_row(table_id, vals, row_id, stats_per_aspect, win_rate_per_her
 	idx = 0;
 	wr_counter = -1;
 	
+	img_path = 'heroes';
+	var td_ids = ["agstd", "leadstd", "juststd", "protstd", "agexp", "leadexp", "justexp", "protexp"];
+	if (table_id == 'hero_scenario_checklist') {
+		img_path = 'villains';
+		td_ids = ["agstdh", "leadstdh", "juststdh", "protstdh", "agexph", "leadexph", "justexph", "protexph"];
+	}
+	
 	for (const a_val of vals) {
 		var new_cell = new_row.insertCell(idx);
 		var new_txt;
 		var has_been_played = false;
 		if (idx == 0) {
 			new_txt = document.createElement("img");
-			new_txt.setAttribute("src", "./images/heroes/" + a_val + ".png");
+			new_txt.setAttribute("src", "./images/" + img_path + "/" + a_val + ".png");
 			new_txt.setAttribute("width", "50px");
 			new_txt.setAttribute("height", "50px");
 		} else if (idx == 1) {
@@ -122,7 +130,7 @@ function add_hero_row(table_id, vals, row_id, stats_per_aspect, win_rate_per_her
 	}
 	
 	// Update the count of games for each aspect+mode in table headers
-	var td_ids = ["agstd", "leadstd", "juststd", "protstd", "agexp", "leadexp", "justexp", "protexp"];
+	
 	for (var k=0; k < td_ids.length; k++) {
 		insert_text(td_ids[k], stats_per_aspect[k]);
 	}
@@ -166,7 +174,7 @@ function set_html_content(element_id, the_html) {
 
 
 /*
-Display Villain and Scenario names
+Display Hero, Villain and Scenario names
 */
 function display_villains_title(villain_id) {
 	villain_name = villains[villain_id];
@@ -179,6 +187,12 @@ function display_villains_title(villain_id) {
 function display_scenario_title(scenario_id) {
 	scenario_name = scenarios[scenario_id];
 	insert_text('scenario_name', scenario_name);
+}
+function display_heroes_title(hero_id) {
+	hero_name = heroes[hero_id];
+	
+	insert_text('hero_name', hero_name);
+	document.getElementById('hero_img').src = './images/heroes/' + hero_id + '.png';
 }
 
 /*
@@ -206,6 +220,32 @@ function init_villains_link() {
 			// Empty hero table
 			reinit_hero_table('villain_scenario_checklist');
 			display_stats_villains_scenario(villain_id);
+		});
+	}
+}
+/*
+Init all heroes list with a link and a dedicated event listener
+*/
+function init_heroes_link() {
+	content = '';
+	for (const [key, value] of Object.entries(heroes)) {
+		content += '<a name="heroes_anchors" href="#heroes_anchors" id="hid_' + key + '" class="a_hero_anchor">' + value + '</a>';
+	}
+	set_html_content('heroes_link', content);
+	
+	// Add event listeners to react on click for those <a> elements
+	const v_anchors = document.querySelectorAll(".a_hero_anchor");
+	for (let button of v_anchors) {
+		button.addEventListener('click', function(event) {
+			console.log('Click on ' + event.srcElement.id);
+			
+			hero_id = event.srcElement.id.match("hid_(h[0-9]+)")[1];
+			display_heroes_title(hero_id);
+			
+			//Addon
+			// Empty hero table
+			reinit_hero_table('hero_scenario_checklist');
+			display_stats_heroes_scenario(hero_id);
 		});
 	}
 }
@@ -281,6 +321,25 @@ function display_stats_villains_scenario(villain_id, scenario_id) {
 	show_element('villain_stat_content', true);
 }
 
+/*
+Here goes the main logic to display stats for a given hero
+*/
+function display_stats_heroes_scenario(hero_id) {
+	displayContent = '';
+	root_element = per_hero_table[hero_id];
+	
+	if (root_element["counter"] > 0) {	
+		display_villains_checklist_table(hero_id);
+	} else {
+		displayContent += "Ce héros n'a pas encore été joué ! En avant !";
+		show_element('hero_scenario_checklist', false);
+	}
+	
+	// Update the div element that contains the stats
+	set_html_content('hero_stat_content', displayContent);
+	show_element('hero_stat_content', true);
+}
+
 /* 
 Handling the Heroes checklist:
 	- iterate over the list of all availables heroes
@@ -347,6 +406,69 @@ function display_hero_checklist_table(villain_id, scenario_id) {
 	// Show the table
 	show_element('villain_scenario_checklist', true, 'inline-table');
 	show_element('villain_scenario_checklist_legend', true, 'inline-table');
+}
+
+/* 
+Handling the Villains checklist:
+	- iterate over the list of all availables villains
+	- check for each if this villain has been played at least once against this hero
+	- retrieve wins/losses per mode (standard/expert) and per aspect (justice/leadership/aggression/protection)
+*/
+function display_villains_checklist_table(hero_id) {
+	row_id = 2;
+	
+	root_element = per_hero_table[hero_id];
+	
+	for (const a_villain of Object.keys(villains)) {
+		// If this villain has been played at least once against this hero
+		nb_games = root_element[a_villain]["counter"];
+		if (nb_games > 0) {
+			vals = [];
+			vals.push(a_villain);
+			vals.push(nb_games);
+			
+			stats_per_aspect = [];
+			win_rate_per_villain = [];
+			
+			// Get for standard per aspect, then expert
+			for (let mode of ['standard', 'expert']) {
+				for (let aspect of ['aggression', 'leadership', 'justice', 'protection']) {
+					nb_played = root_element[a_villain][mode][aspect]["counter"];
+					// Played this mode and aspect ?
+					if (nb_played > 0) {
+						won = root_element[a_villain][mode][aspect]["wins"];
+						if (won > 0) {
+							// 2 means this villain was once beaten in this mode by this hero with this aspect
+							vals.push(2);
+						} else {
+							// 1 means this villain was played but never beaen in this mode by this hero with this aspect
+							vals.push(1);
+						}
+						
+						// Compute win rate for this hero
+						one_villain_stat = {};
+						one_villain_stat["nb_games"] = nb_played;
+						one_villain_stat["wr"] = Math.round(100 * (won/nb_played));
+						win_rate_per_villain.push(one_villain_stat);
+					} else {
+						// 0 means this villain was never played in this mode by this hero with this aspect
+						vals.push(0);
+						win_rate_per_villain.push(0);
+					}
+					
+					// Keep track of mode and aspect
+					stats_per_aspect.push(root_element[mode][aspect]["counter"]);
+				}
+			}
+			row_id ++;
+			
+			// Add a row in table
+			add_hero_row('hero_scenario_checklist', vals, row_id, stats_per_aspect, win_rate_per_villain);
+		}
+	}
+	
+	// Show the table
+	show_element('hero_scenario_checklist', true, 'inline-table');
 }
 
 /*

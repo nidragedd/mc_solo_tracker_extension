@@ -23,7 +23,7 @@
 			justify-content: center;
 		}
 		
-		#villain_stat_title {
+		#villain_stat_title, #heroes_stat_title {
 			font-family: "Komika Title";
 			margin-top: 1rem;
 			margin-bottom: 1rem;
@@ -61,7 +61,7 @@
 			font-size: 1.25rem;
 			margin-top: 0;
 		}
-		#villain_img {
+		#villain_img, #hero_img {
 			vertical-align: middle;
 			border-style: none;
 			margin-top: .25rem;
@@ -71,7 +71,7 @@
 			width: 100px;
 			height: 100px;
 		}
-		.a_scenario_anchor:link, .a_scenario_anchor:visited, .a_villain_anchor:link, .a_villain_anchor:visited {
+		.a_scenario_anchor:link, .a_scenario_anchor:visited, .a_villain_anchor:link, .a_villain_anchor:visited, .a_hero_anchor:link, .a_hero_anchor:visited {
 			font-family: Verdana;
 			font-size: 0.75em;
 			color: white;
@@ -87,16 +87,16 @@
 		.a_scenario_anchor:hover, .a_scenario_anchor:active {
 			background-color: red;
 		}
-		.a_villain_anchor:link, .a_villain_anchor:visited {
+		.a_villain_anchor:link, .a_villain_anchor:visited, .a_hero_anchor:link, .a_hero_anchor:visited {
 			background-color: #cccccc;
 			color: #000;
 		}
-		.a_villain_anchor:hover, .a_villain_anchor:active {
+		.a_villain_anchor:hover, .a_villain_anchor:active, .a_hero_anchor:hover, .a_hero_anchor:active {
 			background-color: #efefef;
 			color: #000;
 		}
 		
-		#villain_scenario_checklist, #villain_scenario_checklist_legend {
+		#villain_scenario_checklist, #villain_scenario_checklist_legend, #hero_scenario_checklist {
 			border-collapse: collapse;
 			margin: auto;
 		    border: solid 2px;
@@ -110,10 +110,10 @@
 		}
 		
 		
-		#villain_scenario_checklist th.standard {
+		#villain_scenario_checklist th.standard, #hero_scenario_checklist th.standard {
 			background-color: #efefef;
 		}
-		#villain_scenario_checklist th.expert {
+		#villain_scenario_checklist th.expert, #hero_scenario_checklist th.expert {
 			background-color: #cccccc;
 		}
 		td.aggression, td.justice, td.leadership, td.protection {
@@ -141,16 +141,16 @@
 			background-color: #efefef;
 		}
 		
-		#villain_scenario_checklist td.won, #villain_scenario_checklist td.lost {
+		#villain_scenario_checklist td.won, #villain_scenario_checklist td.lost, #hero_scenario_checklist td.won, #hero_scenario_checklist td.lost {
 			font-style: italic;
 			font-size: smaller;
 		}
-		#villain_scenario_checklist td.won {
+		#villain_scenario_checklist td.won, #hero_scenario_checklist td.won {
 			color: teal;
 		}
-		#villain_scenario_checklist td.lost {
+		#villain_scenario_checklist td.lost, #hero_scenario_checklist td.lost {
 			color: brown;
-		}									   
+		}
 	</style>
   </head>
   <body>
@@ -160,6 +160,38 @@
 		<div class="chart-container"><canvas id="AllVillainsData"></canvas></div>
 		<div class="chart-container"><canvas id="AllHeroesData"></canvas></div>
 	</div>
+	
+	<hr />
+	<h1 class="center">Statistiques des héros</h1>
+	<div id="heroes_link" style="margin:auto; width:80%; text-align: center;"></div>
+	<div id="heroes_stat_title" class="center">
+		<div class="center flex">
+			<img id="hero_img" src="./images/heroes/h0.jpg">
+			<div class="center"><h4 id="hero_name">Choisissez un héros</h4></div>
+		</div>
+	</div>
+	<h3 id="hero_stat_content" class="center"></h3>
+	<div class="center">
+		<table id="hero_scenario_checklist"style="display:none;">
+			<tbody>
+			<tr>
+				<th rowspan="3">Méchants</th>
+				<th rowspan="3">Combats</th>
+				<th colspan="4" class="standard">Standard</th>
+				<th colspan="4" class="expert">Expert</th>
+			</tr>
+			<tr>
+				<td class="aggression">Aggressivité</td><td class="leadership">Commandement</td><td class="justice">Justice</td><td class="protection">Protection</td>
+				<td class="aggression">Aggressivité</td><td class="leadership">Commandement</td><td class="justice">Justice</td><td class="protection">Protection</td>
+			</tr>
+			<tr>
+				<td class="aggression" id="agstdh"></td><td class="leadership" id="leadstdh"></td><td class="justice" id="juststdh"></td><td class="protection" id="protstdh"></td>
+				<td class="aggression" id="agexph"></td><td class="leadership" id="leadexph"></td><td class="justice" id="justexph"></td><td class="protection" id="protexph"></td>
+			</tr>
+			<tbody>
+		</table>
+	</div>
+	
 	<hr />
 	<h1 class="center">Statistiques des méchants</h1>
 	<div id="villains_link" style="margin:auto; width:80%; text-align: center;"></div>

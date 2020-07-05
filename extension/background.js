@@ -92,6 +92,24 @@ function init_heroes_table(heroes) {
 		per_hero_table[a_hero]["counter"] = 0;
 		per_hero_table[a_hero]["wins"] = 0;
 		per_hero_table[a_hero]["losses"] = 0;
+		
+		for (let a_villain of Object.keys(villains)) {
+			per_hero_table[a_hero][a_villain] = {};
+			per_hero_table[a_hero][a_villain]["counter"] = 0;
+			for (let mode of ['standard', 'expert']) {
+				per_hero_table[a_hero][a_villain][mode] = {};
+				per_hero_table[a_hero][mode] = {};
+				for (let aspect of ['leadership', 'justice', 'aggression', 'protection']) {
+					per_hero_table[a_hero][mode][aspect] = {};
+					per_hero_table[a_hero][mode][aspect]["counter"] = 0;
+					
+					per_hero_table[a_hero][a_villain][mode][aspect] = {};
+					per_hero_table[a_hero][a_villain][mode][aspect]["counter"] = 0;
+					per_hero_table[a_hero][a_villain][mode][aspect]["wins"] = 0;
+					per_hero_table[a_hero][a_villain][mode][aspect]["losses"] = 0;
+				}
+			}
+		}
 	}
 }
 
@@ -198,6 +216,9 @@ function add_fight_in_tables(item, index) {
 	per_villain_table[the_villain]["counter"] += 1;
 	
 	per_hero_table[the_hero]["counter"] += 1;
+	per_hero_table[the_hero][the_villain]["counter"] += 1;
+	per_hero_table[the_hero][the_villain][the_mode][the_aspect]["counter"] += 1;
+	per_hero_table[the_hero][the_mode][the_aspect]["counter"] += 1;
 	
 	var key_to_upd = "losses";
 	if (is_win[0] == true) {
@@ -216,6 +237,8 @@ function add_fight_in_tables(item, index) {
 	per_villain_table[the_villain][the_mode][the_hero][key_to_upd] += 1;
 	per_villain_table[the_villain][the_mode][key_to_upd] += 1;
 	per_villain_table[the_villain][key_to_upd] += 1;
+	
+	per_hero_table[the_hero][the_villain][the_mode][the_aspect][key_to_upd] += 1;
 	per_hero_table[the_hero][key_to_upd] += 1;
 	
 	// Aspect and mode for this villain & scenario
