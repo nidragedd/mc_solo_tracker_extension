@@ -3,7 +3,7 @@
 ## LIRE ATTENTIVEMENT AVANT L'INSTALLATION
 Quelques précautions/rappels avant de procéder à l'installation de l'extension:
 * cette extension n'a été développée et testée que sous Windows 10 et Chrome 83. Elle ne fonctionne pas pour Firefox. Je ne sais pas si elle fonctionne sous Chrome Mac.
-* l'auteur du site de tracking [MC Solo Tracker](https://marvelchampions.azurewebsites.net/) préconise une utilisation sur mobile. Or cette extension est plutôt vouée à être utilisée sur un ordinateur. Si vous avez utilisé l'outil pour logger vos parties depuis votre mobile alors cette extension ne vous sera pas utile car il n'existe pas encore à ce jour de mécanisme de synchronisation entre vos différents appareils.
+* l'auteur du site de tracking [MC Solo Tracker](https://marvelchampions.azurewebsites.net/) préconise une utilisation sur mobile. Or cette extension est plutôt vouée à être utilisée sur un ordinateur. Si vous avez utilisé l'outil pour logger vos parties depuis votre mobile alors il vous faudra vous authentifier via Facebook Connect pour une synchronisation de la progression entre vos différents appareils.
 * l'extension doit être utilisée sur le même ordinateur + navigateur que celui qui vous sert à saisir le résultat de vos parties solo
 * cette extension ne peut pas fonctionner en navigation privée
 * cette extension peut cesser de fonctionner du jour au lendemain en cas de mise à jour impactante dans la structure de données du site [MC Solo Tracker](https://marvelchampions.azurewebsites.net/)
