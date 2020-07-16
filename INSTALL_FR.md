@@ -15,7 +15,7 @@ Il y a toutefois un inconvénient un peu gênant: lors du lancement de Chrome, u
 
 
 ## COMMENT INSTALLER L'EXTENSION ?
-1. Téléchargez le zip de la dernière version de l'extension disponible [ici](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.3.zip). (Autre option pour développeurs ou si vous voulez être certains du code qui est exécuté: vous pouvez cloner ce repository de code et aller directement à l'étape 3).
+1. Téléchargez le zip de la dernière version de l'extension disponible [ici](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.4.zip). (Autre option pour développeurs ou si vous voulez être certains du code qui est exécuté: vous pouvez cloner ce repository de code et aller directement à l'étape 3).
 2. Dézippez quelque part sur votre ordinateur:
 ![](docs/install/install_step1.jpg)
 ![](docs/install/install_step2.jpg)
@@ -39,6 +39,7 @@ Il y a toutefois un inconvénient un peu gênant: lors du lancement de Chrome, u
 ## INSTALLER UNE NOUVELLE VERSION DE L'EXTENSION
 | Version | Lien | Description                                                                                                                                                                                      |
 |---------|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0.4     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.4.zip) | Ajout stats globales des taux de victoire par aspect/affinité et pour chaque méchant |
 | 0.3     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.3.zip) | Ajout du taux de victoire par héros et du nombre de combats par aspect/affinité |
 | 0.2     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.2.zip) | Ajout des statistiques similaires pour chaque méchant (sans devoir filtrer sur un scénario) Correction de l'effet désagréable sur la sélection de méchant ou scénario (remontée en haut de page) |
 | 0.1     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker.zip)      | Version initiale, contient les statistiques pour chaque couple méchant+scénario                                                                                                                  |

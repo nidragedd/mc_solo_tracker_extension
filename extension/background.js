@@ -19,6 +19,8 @@ villain_id
 */
 var per_villain_table = {};
 var per_hero_table = {};
+var cst_aspects = ['leadership', 'justice', 'aggression', 'protection'];
+var cst_modes = ['standard', 'expert'];
 
 /*
 This call is made by the injected.js file
@@ -83,30 +85,44 @@ function add_villain(item, index) {
 	villains[item["id"]] = item["name"];
 }
 
+/*
+Given a root element in a table, add another dict as child and init common counters to 0
+*/
+function init_table_as_dict(root_element, child_element) {
+	root_element[child_element] = {};
+	root_element[child_element]["counter"] = 0;
+	root_element[child_element]["wins"] = 0;
+	root_element[child_element]["losses"] = 0;
+}
+function add_count(root_element, key_to_upd) {
+	root_element["counter"] += 1;
+	root_element[key_to_upd] += 1;
+}
+
 /* 
-Init the heroes table - so far only for main stats (nb wins vs. nb losses)
+Init the heroes table: init all to 0, value will be really set once the JSON list of fights will be parsed
 */
 function init_heroes_table(heroes) {
 	for (let a_hero of Object.keys(heroes)) {
-		per_hero_table[a_hero] = {};
-		per_hero_table[a_hero]["counter"] = 0;
-		per_hero_table[a_hero]["wins"] = 0;
-		per_hero_table[a_hero]["losses"] = 0;
+		init_table_as_dict(per_hero_table, a_hero);
 		
 		for (let a_villain of Object.keys(villains)) {
-			per_hero_table[a_hero][a_villain] = {};
-			per_hero_table[a_hero][a_villain]["counter"] = 0;
-			for (let mode of ['standard', 'expert']) {
-				per_hero_table[a_hero][a_villain][mode] = {};
-				per_hero_table[a_hero][mode] = {};
-				for (let aspect of ['leadership', 'justice', 'aggression', 'protection']) {
-					per_hero_table[a_hero][mode][aspect] = {};
-					per_hero_table[a_hero][mode][aspect]["counter"] = 0;
+			init_table_as_dict(per_hero_table[a_hero], a_villain);
+
+			for (let mode of cst_modes) {
+				init_table_as_dict(per_hero_table[a_hero][a_villain], mode);
+				init_table_as_dict(per_hero_table[a_hero], mode);
+
+				for (let aspect of cst_aspects) {
+					init_table_as_dict(per_hero_table[a_hero], aspect);
+					init_table_as_dict(per_hero_table[a_hero][mode], aspect);
+					init_table_as_dict(per_hero_table[a_hero][a_villain][mode], aspect);
 					
-					per_hero_table[a_hero][a_villain][mode][aspect] = {};
-					per_hero_table[a_hero][a_villain][mode][aspect]["counter"] = 0;
-					per_hero_table[a_hero][a_villain][mode][aspect]["wins"] = 0;
-					per_hero_table[a_hero][a_villain][mode][aspect]["losses"] = 0;
+					// Ugly: have to loop again otherwise one of the mode gets lost in the process.
+					// Fortunately, there are only 2 modes so not a big deal
+					for (let inner_mode of cst_modes) {
+						init_table_as_dict(per_hero_table[a_hero][aspect], inner_mode);
+					}
 				}
 			}
 		}
@@ -118,69 +134,39 @@ Init the villains and scenario table with empty data
 */
 function init_villains_scenarios_table(item, index) {
 	// Here, item is the villain id
-	per_villain_table[item] = {};
-	per_villain_table[item]["counter"] = 0;
-	per_villain_table[item]["wins"] = 0;
-	per_villain_table[item]["losses"] = 0;
+	init_table_as_dict(per_villain_table, item);
 	per_villain_table[item]["heroes_count"] = {};
 	per_villain_table[item]["aspects_count"] = {};
 	
 	for (let a_scenario of Object.keys(scenarios)) {
-		per_villain_table[item][a_scenario] = {};
+		init_table_as_dict(per_villain_table[item], a_scenario);
 		per_villain_table[item][a_scenario]["heroes_count"] = {};
 		per_villain_table[item][a_scenario]["aspects_count"] = {};
-		per_villain_table[item][a_scenario]["counter"] = 0;
-		per_villain_table[item][a_scenario]["wins"] = 0;
-		per_villain_table[item][a_scenario]["losses"] = 0;
 		
-		for (let mode of ['standard', 'expert']) {
-			per_villain_table[item][a_scenario][mode] = {};
-			per_villain_table[item][a_scenario][mode]["counter"] = 0;
-			per_villain_table[item][a_scenario][mode]["wins"] = 0;
-			per_villain_table[item][a_scenario][mode]["losses"] = 0;
-			per_villain_table[item][mode] = {};
-			per_villain_table[item][mode]["counter"] = 0;
-			per_villain_table[item][mode]["wins"] = 0;
-			per_villain_table[item][mode]["losses"] = 0;
+		for (let mode of cst_modes) {
+			init_table_as_dict(per_villain_table[item][a_scenario], mode);
+			init_table_as_dict(per_villain_table[item], mode);
 		
 			for (let a_hero of Object.keys(heroes)) {
 				// Per scenario stats
-				per_villain_table[item][a_scenario][mode][a_hero] = {};
-				per_villain_table[item][a_scenario][mode][a_hero]["counter"] = 0;
-				per_villain_table[item][a_scenario][mode][a_hero]["wins"] = 0;
-				per_villain_table[item][a_scenario][mode][a_hero]["losses"] = 0;
+				init_table_as_dict(per_villain_table[item][a_scenario][mode], a_hero);
 				// Overall scenarios
-				per_villain_table[item][mode][a_hero] = {};
-				per_villain_table[item][mode][a_hero]["counter"] = 0;
-				per_villain_table[item][mode][a_hero]["wins"] = 0;
-				per_villain_table[item][mode][a_hero]["losses"] = 0;
+				init_table_as_dict(per_villain_table[item][mode], a_hero);
 				
 				// Counts per hero for the villain + scenario tuple
 				per_villain_table[item][a_scenario]["heroes_count"][a_hero] = 0;
 				per_villain_table[item]["heroes_count"][a_hero] = 0;
 				
-				for (let aspect of ['leadership', 'justice', 'aggression', 'protection']) {
+				for (let aspect of cst_aspects) {
 					// Per scenario stats
+					init_table_as_dict(per_villain_table[item][a_scenario][mode][a_hero], aspect);
+					init_table_as_dict(per_villain_table[item][a_scenario][mode], aspect);
 					per_villain_table[item][a_scenario]["aspects_count"][aspect] = 0;
-					per_villain_table[item][a_scenario][mode][a_hero][aspect] = {};
-					per_villain_table[item][a_scenario][mode][a_hero][aspect]["counter"] = 0;
-					per_villain_table[item][a_scenario][mode][a_hero][aspect]["wins"] = 0;
-					per_villain_table[item][a_scenario][mode][a_hero][aspect]["losses"] = 0;
-					per_villain_table[item][a_scenario][mode][aspect] = {};
-					per_villain_table[item][a_scenario][mode][aspect]["counter"] = 0;
-					per_villain_table[item][a_scenario][mode][aspect]["wins"] = 0;
-					per_villain_table[item][a_scenario][mode][aspect]["losses"] = 0;
 					
 					// Overall scenarios
+					init_table_as_dict(per_villain_table[item][mode][a_hero], aspect);
+					init_table_as_dict(per_villain_table[item][mode], aspect);
 					per_villain_table[item]["aspects_count"][aspect] = 0;
-					per_villain_table[item][mode][a_hero][aspect] = {};
-					per_villain_table[item][mode][a_hero][aspect]["counter"] = 0;
-					per_villain_table[item][mode][a_hero][aspect]["wins"] = 0;
-					per_villain_table[item][mode][a_hero][aspect]["losses"] = 0;
-					per_villain_table[item][mode][aspect] = {};
-					per_villain_table[item][mode][aspect]["counter"] = 0;
-					per_villain_table[item][mode][aspect]["wins"] = 0;
-					per_villain_table[item][mode][aspect]["losses"] = 0;
 				}
 			}
 		}
@@ -198,48 +184,36 @@ function add_fight_in_tables(item, index) {
 	var the_aspect = [item["aspect"]];
 	var the_mode = [item["difficulte"]];
 	
-	// Debug logging
-	//console.log(is_win + " " + the_villain + " " + the_scenario + " " + the_mode + " " + the_aspect + " " + the_hero);
-	
-	// Update overall counters for this scenario
-	per_villain_table[the_villain][the_scenario][the_mode][the_hero][the_aspect]["counter"] += 1;
-	per_villain_table[the_villain][the_scenario][the_mode][the_aspect]["counter"] += 1;
-	per_villain_table[the_villain][the_scenario][the_mode][the_hero]["counter"] += 1;
-	per_villain_table[the_villain][the_scenario][the_mode]["counter"] += 1;
-	per_villain_table[the_villain][the_scenario]["counter"] += 1;
-	
-	// Per villain
-	per_villain_table[the_villain][the_mode][the_hero][the_aspect]["counter"] += 1;
-	per_villain_table[the_villain][the_mode][the_aspect]["counter"] += 1;
-	per_villain_table[the_villain][the_mode][the_hero]["counter"] += 1;
-	per_villain_table[the_villain][the_mode]["counter"] += 1;
-	per_villain_table[the_villain]["counter"] += 1;
-	
-	per_hero_table[the_hero]["counter"] += 1;
-	per_hero_table[the_hero][the_villain]["counter"] += 1;
-	per_hero_table[the_hero][the_villain][the_mode][the_aspect]["counter"] += 1;
-	per_hero_table[the_hero][the_mode][the_aspect]["counter"] += 1;
-	
 	var key_to_upd = "losses";
 	if (is_win[0] == true) {
 		key_to_upd = "wins";
 	}
-	// Update wins/losses counter
-	per_villain_table[the_villain][the_scenario][the_mode][the_hero][the_aspect][key_to_upd] += 1;
-	per_villain_table[the_villain][the_scenario][the_mode][the_aspect][key_to_upd] += 1;
-	per_villain_table[the_villain][the_scenario][the_mode][the_hero][key_to_upd] += 1;
-	per_villain_table[the_villain][the_scenario][the_mode][key_to_upd] += 1;
-	per_villain_table[the_villain][the_scenario][key_to_upd] += 1;
+	
+	// Debug logging
+	//console.log(is_win + " " + the_villain + " " + the_scenario + " " + the_mode + " " + the_aspect + " " + the_hero);
+	
+	// Update overall counters for this scenario
+	add_count(per_villain_table[the_villain][the_scenario][the_mode][the_hero][the_aspect], key_to_upd);
+	add_count(per_villain_table[the_villain][the_scenario][the_mode][the_aspect], key_to_upd);
+	add_count(per_villain_table[the_villain][the_scenario][the_mode][the_hero], key_to_upd);
+	add_count(per_villain_table[the_villain][the_scenario][the_mode], key_to_upd);
+	add_count(per_villain_table[the_villain][the_scenario], key_to_upd);
 	
 	// Per villain
-	per_villain_table[the_villain][the_mode][the_hero][the_aspect][key_to_upd] += 1;
-	per_villain_table[the_villain][the_mode][the_aspect][key_to_upd] += 1;
-	per_villain_table[the_villain][the_mode][the_hero][key_to_upd] += 1;
-	per_villain_table[the_villain][the_mode][key_to_upd] += 1;
-	per_villain_table[the_villain][key_to_upd] += 1;
+	add_count(per_villain_table[the_villain][the_mode][the_hero][the_aspect], key_to_upd);
+	add_count(per_villain_table[the_villain][the_mode][the_aspect], key_to_upd);
+	add_count(per_villain_table[the_villain][the_mode][the_hero], key_to_upd);
+	add_count(per_villain_table[the_villain][the_mode], key_to_upd);
+	add_count(per_villain_table[the_villain], key_to_upd);
 	
-	per_hero_table[the_hero][the_villain][the_mode][the_aspect][key_to_upd] += 1;
-	per_hero_table[the_hero][key_to_upd] += 1;
+	// For this hero
+	add_count(per_hero_table[the_hero], key_to_upd);
+	add_count(per_hero_table[the_hero][the_villain], key_to_upd);
+	add_count(per_hero_table[the_hero][the_villain][the_mode], key_to_upd);
+	add_count(per_hero_table[the_hero][the_villain][the_mode][the_aspect], key_to_upd);
+	add_count(per_hero_table[the_hero][the_mode][the_aspect], key_to_upd);
+	add_count(per_hero_table[the_hero][the_aspect], key_to_upd);
+	add_count(per_hero_table[the_hero][the_aspect][the_mode], key_to_upd);
 	
 	// Aspect and mode for this villain & scenario
 	per_villain_table[the_villain][the_scenario]["heroes_count"][the_hero] += 1;

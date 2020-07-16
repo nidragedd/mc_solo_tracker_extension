@@ -96,7 +96,7 @@
 			color: #000;
 		}
 		
-		#villain_scenario_checklist, #villain_scenario_checklist_legend, #hero_scenario_checklist {
+		#villain_scenario_checklist, #villain_scenario_checklist_legend, #hero_scenario_checklist, #hero_aspect_summary {
 			border-collapse: collapse;
 			margin: auto;
 		    border: solid 2px;
@@ -110,13 +110,13 @@
 		}
 		
 		
-		#villain_scenario_checklist th.standard, #hero_scenario_checklist th.standard {
+		th.standard, td.wr_header, td.wr_std {
 			background-color: #efefef;
 		}
-		#villain_scenario_checklist th.expert, #hero_scenario_checklist th.expert {
+		th.expert, td.wr_exp {
 			background-color: #cccccc;
 		}
-		td.aggression, td.justice, td.leadership, td.protection {
+		td.aggression, td.justice, td.leadership, td.protection, td.wr_header, td.wr_std, td.wr_exp {
 			font-weight: bold;
 		}
 		td.aggression {
@@ -140,8 +140,11 @@
 		td.no_play {
 			background-color: #efefef;
 		}
+		td.tot_wr {
+			background-color: #dbefdc;
+		}
 		
-		#villain_scenario_checklist td.won, #villain_scenario_checklist td.lost, #hero_scenario_checklist td.won, #hero_scenario_checklist td.lost {
+		#villain_scenario_checklist td.won, #villain_scenario_checklist td.lost, #hero_scenario_checklist td.won, #hero_scenario_checklist td.lost, td.tot_wr {
 			font-style: italic;
 			font-size: smaller;
 		}
@@ -179,14 +182,30 @@
 				<th rowspan="3">Combats</th>
 				<th colspan="4" class="standard">Standard</th>
 				<th colspan="4" class="expert">Expert</th>
+				<th colspan="3" class="standard">Win rate</th>
 			</tr>
 			<tr>
 				<td class="aggression">Aggressivité</td><td class="leadership">Commandement</td><td class="justice">Justice</td><td class="protection">Protection</td>
 				<td class="aggression">Aggressivité</td><td class="leadership">Commandement</td><td class="justice">Justice</td><td class="protection">Protection</td>
+				<td rowspan="2" class="wr_header">Tot.</td><td rowspan="2" class="wr_header">Standard</td><td rowspan="2" class="wr_header">Expert</td>
 			</tr>
 			<tr>
 				<td class="aggression" id="agstdh"></td><td class="leadership" id="leadstdh"></td><td class="justice" id="juststdh"></td><td class="protection" id="protstdh"></td>
 				<td class="aggression" id="agexph"></td><td class="leadership" id="leadexph"></td><td class="justice" id="justexph"></td><td class="protection" id="protexph"></td>
+			</tr>
+			<tbody>
+		</table>
+		<br /><br />
+		<table id="hero_aspect_summary"style="display:none;">
+			<tbody>
+			<tr>
+				<th rowspan="2">Aspect</th>
+				<th colspan="3" class="standard">Combats</th>
+				<th colspan="3" class="expert">Win rate</th>
+			</tr>
+			<tr>
+				<td class="wr_std">Standard</td><td class="wr_std">Expert</td><td class="wr_std">Tot.</td>
+				<td class="wr_exp">Standard</td><td class="wr_exp">Expert</td><td class="wr_exp">Tot.</td>
 			</tr>
 			<tbody>
 		</table>

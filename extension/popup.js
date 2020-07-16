@@ -80,10 +80,16 @@ function add_hero_row(table_id, vals, row_id, stats_per_aspect, win_rate_per_her
 	wr_counter = -1;
 	
 	img_path = 'heroes';
+	a_id_begin = "hid_";
+	href_anchor_link = "#heroes_anchors";
+	href_class = "a_hero_anchor_v";
 	var td_ids = ["agstd", "leadstd", "juststd", "protstd", "agexp", "leadexp", "justexp", "protexp"];
 	if (table_id == 'hero_scenario_checklist') {
 		img_path = 'villains';
 		td_ids = ["agstdh", "leadstdh", "juststdh", "protstdh", "agexph", "leadexph", "justexph", "protexph"];
+		a_id_begin = "vid_";
+		href_anchor_link = "#villains_anchors";
+		href_class = "a_villain_anchor_h";
 	}
 	
 	for (const a_val of vals) {
@@ -91,10 +97,20 @@ function add_hero_row(table_id, vals, row_id, stats_per_aspect, win_rate_per_her
 		var new_txt;
 		var has_been_played = false;
 		if (idx == 0) {
-			new_txt = document.createElement("img");
-			new_txt.setAttribute("src", "./images/" + img_path + "/" + a_val + ".png");
-			new_txt.setAttribute("width", "50px");
-			new_txt.setAttribute("height", "50px");
+			a_id = a_id_begin + a_val;
+			inner_link = document.createElement("a");
+			inner_link.setAttribute("href", href_anchor_link);
+			inner_link.setAttribute("class", href_class);
+			inner_link.setAttribute("id", a_id);
+			
+			img_element = document.createElement("img");
+			img_element.setAttribute("src", "./images/" + img_path + "/" + a_val + ".png");
+			img_element.setAttribute("width", "50px");
+			img_element.setAttribute("height", "50px");
+			img_element.setAttribute("id", a_id);
+			inner_link.appendChild(img_element);
+			
+			new_txt = inner_link;
 		} else if (idx == 1) {
 			new_txt = document.createTextNode(a_val);
 		} else if (idx > 1) {
@@ -129,21 +145,41 @@ function add_hero_row(table_id, vals, row_id, stats_per_aspect, win_rate_per_her
 		idx++;
 	}
 	
-	// Update the count of games for each aspect+mode in table headers
+	// Handle total win rates if hero table list (todo later: same for villains)
+	if (table_id == 'hero_scenario_checklist') {
+		for (var m=0; m < 3; m++) {
+			wr_counter++;
+			var new_cell = new_row.insertCell(idx);
+			new_txt = document.createTextNode(win_rate_per_hero[wr_counter] + "%");
+			new_cell.setAttribute("class", "tot_wr");
+			new_cell.appendChild(new_txt);
+			idx++;
+		}
+	}
 	
+	// Update the count of games for each aspect+mode in table headers
 	for (var k=0; k < td_ids.length; k++) {
 		insert_text(td_ids[k], stats_per_aspect[k]);
+	}
+	
+	// Add event listeners to react on click for those <a> elements
+	if (table_id == 'hero_scenario_checklist') {
+		const v_anchors = document.querySelectorAll(".a_villain_anchor_h");
+		add_villains_click_listener(v_anchors);
+	} else {
+		const v_anchors = document.querySelectorAll(".a_hero_anchor_v");
+		add_hero_click_listener(v_anchors);
 	}
 }
 
 /*
 Used to reinitialize the hero checklist table by removing all rows except the table header
 */
-function reinit_hero_table(table_id) {
+function reinit_hero_table(table_id, index) {
 	var table_ref = document.getElementById(table_id);
 	var rows_count = table_ref.rows.length;
-	while (table_ref.rows.length > 3) {
-		table_ref.deleteRow(3);
+	while (table_ref.rows.length > index) {
+		table_ref.deleteRow(index);
 	}
 }
 
@@ -207,6 +243,9 @@ function init_villains_link() {
 	
 	// Add event listeners to react on click for those <a> elements
 	const v_anchors = document.querySelectorAll(".a_villain_anchor");
+	add_villains_click_listener(v_anchors);
+}
+function add_villains_click_listener(v_anchors) {
 	for (let button of v_anchors) {
 		button.addEventListener('click', function(event) {
 			console.log('Click on ' + event.srcElement.id);
@@ -218,11 +257,12 @@ function init_villains_link() {
 			
 			//Addon
 			// Empty hero table
-			reinit_hero_table('villain_scenario_checklist');
+			reinit_hero_table('villain_scenario_checklist', 3);
 			display_stats_villains_scenario(villain_id);
 		});
 	}
 }
+
 /*
 Init all heroes list with a link and a dedicated event listener
 */
@@ -235,6 +275,9 @@ function init_heroes_link() {
 	
 	// Add event listeners to react on click for those <a> elements
 	const v_anchors = document.querySelectorAll(".a_hero_anchor");
+	add_hero_click_listener(v_anchors);
+}
+function add_hero_click_listener(v_anchors) {
 	for (let button of v_anchors) {
 		button.addEventListener('click', function(event) {
 			console.log('Click on ' + event.srcElement.id);
@@ -244,7 +287,8 @@ function init_heroes_link() {
 			
 			//Addon
 			// Empty hero table
-			reinit_hero_table('hero_scenario_checklist');
+			reinit_hero_table('hero_scenario_checklist', 3);
+			reinit_hero_table('hero_aspect_summary', 2);
 			display_stats_heroes_scenario(hero_id);
 		});
 	}
@@ -273,8 +317,7 @@ function init_scenarios_link(villain_id) {
 			display_scenario_title(scenario_id);
 			
 			// Empty hero table
-			reinit_hero_table('villain_scenario_checklist');
-			
+			reinit_hero_table('villain_scenario_checklist', 3);
 			display_stats_villains_scenario(villain_id, scenario_id);
 		});
 	}
@@ -333,6 +376,7 @@ function display_stats_heroes_scenario(hero_id) {
 	} else {
 		displayContent += "Ce héros n'a pas encore été joué ! En avant !";
 		show_element('hero_scenario_checklist', false);
+		show_element('hero_aspect_summary', false);
 	}
 	
 	// Update the div element that contains the stats
@@ -462,13 +506,89 @@ function display_villains_checklist_table(hero_id) {
 			}
 			row_id ++;
 			
+			// Add global win rate values
+			total_wr = Math.round(100 * (root_element[a_villain]["wins"]/root_element[a_villain]["counter"]));
+			total_wr_std = Math.round(100 * (root_element[a_villain]['standard']["wins"]/root_element[a_villain]['standard']["counter"]));
+			total_wr_exp = Math.round(100 * (root_element[a_villain]['expert']["wins"]/root_element[a_villain]['expert']["counter"]));
+			win_rate_per_villain.push(total_wr);
+			win_rate_per_villain.push(total_wr_std);
+			win_rate_per_villain.push(total_wr_exp);
+			
 			// Add a row in table
 			add_hero_row('hero_scenario_checklist', vals, row_id, stats_per_aspect, win_rate_per_villain);
 		}
 	}
 	
-	// Show the table
+	// Show the hero tables
 	show_element('hero_scenario_checklist', true, 'inline-table');
+	handle_hero_aspect_summary(hero_id);
+}
+
+/*
+Here we take care of the specific table giving win rates stats per aspect for a given hero
+*/
+function handle_hero_aspect_summary(hero_id) {
+	var table_ref = document.getElementById('hero_aspect_summary');
+	root_element = per_hero_table[hero_id];
+	row_id = 2;
+	aspects_fr_names = ['Aggressivité', 'Commandement', 'Justice', 'Protection'];
+	aspect_counter = 0;
+	
+	for (let aspect of ['aggression', 'leadership', 'justice', 'protection']) {
+		nb_played = root_element[aspect]["counter"];
+		// Played this mode and aspect ?
+		if (nb_played > 0) {
+			var new_row = table_ref.insertRow(row_id);
+			
+			// Name of the aspect
+			var new_cell = new_row.insertCell(0);
+			new_txt = document.createTextNode(aspects_fr_names[aspect_counter]);
+			new_cell.setAttribute('class', aspect);
+			new_cell.appendChild(new_txt);
+			
+			// Nb fights for this aspect: overall/standard/expert
+			var new_cell = new_row.insertCell(1);
+			new_txt = document.createTextNode(root_element[aspect]['standard']["counter"]);
+			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
+			new_cell.appendChild(new_txt);
+			
+			var new_cell = new_row.insertCell(2);
+			new_txt = document.createTextNode(root_element[aspect]['expert']["counter"]);
+			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
+			new_cell.appendChild(new_txt);
+			
+			var new_cell = new_row.insertCell(3);
+			new_txt = document.createTextNode(root_element[aspect]["counter"]);
+			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
+			new_cell.appendChild(new_txt);
+			
+			// Win rates for this aspect: overall/standard/expert
+			total_wr = Math.round(100 * (root_element[aspect]["wins"]/root_element[aspect]["counter"]));
+			total_wr_std = Math.round(100 * (root_element[aspect]['standard']["wins"]/root_element[aspect]['standard']["counter"]));
+			total_wr_exp = Math.round(100 * (root_element[aspect]['expert']["wins"]/root_element[aspect]['expert']["counter"]));
+			
+			var new_cell = new_row.insertCell(4);
+			new_txt = document.createTextNode(total_wr_std + "%");
+			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
+			new_cell.appendChild(new_txt);
+			
+			var new_cell = new_row.insertCell(5);
+			new_txt = document.createTextNode(total_wr_exp + "%");
+			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
+			new_cell.appendChild(new_txt);
+			
+			var new_cell = new_row.insertCell(6);
+			new_txt = document.createTextNode(total_wr + "%");
+			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
+			new_cell.appendChild(new_txt)
+			
+			
+			row_id++;
+		}
+		aspect_counter++;
+	}
+	
+	show_element('hero_aspect_summary', true, 'inline-table');
 }
 
 /*
