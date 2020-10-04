@@ -39,6 +39,7 @@ Il y a toutefois un inconvénient un peu gênant: lors du lancement de Chrome, u
 ## INSTALLER UNE NOUVELLE VERSION DE L'EXTENSION
 | Version | Lien | Description                                                                                                                                                                                      |
 |---------|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0.5     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.5.zip) | Ajout des personnages de la campagne Crâne Rouge et gestion du cas particulier SpiderWoman - Correction du bug d'affichage sur Winrate si pas de partie jouée |
 | 0.4     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.4.zip) | Ajout stats globales des taux de victoire par aspect/affinité et pour chaque méchant |
 | 0.3     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.3.zip) | Ajout du taux de victoire par héros et du nombre de combats par aspect/affinité |
 | 0.2     | [Download](https://github.com/nidragedd/mc_solo_tracker_extension/blob/master/mc_solo_tracker_v0.2.zip) | Ajout des statistiques similaires pour chaque méchant (sans devoir filtrer sur un scénario) Correction de l'effet désagréable sur la sélection de méchant ou scénario (remontée en haut de page) |

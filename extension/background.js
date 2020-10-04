@@ -19,7 +19,7 @@ villain_id
 */
 var per_villain_table = {};
 var per_hero_table = {};
-var cst_aspects = ['leadership', 'justice', 'aggression', 'protection'];
+var cst_aspects = ['leadership', 'justice', 'aggression', 'protection', 'justiceprotection', 'justiceleadership', 'justiceagression', 'leadershipprotection', 'leadershipaggression', 'protectionaggression'];
 var cst_modes = ['standard', 'expert'];
 
 /*

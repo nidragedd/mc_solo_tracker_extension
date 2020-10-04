@@ -96,7 +96,7 @@
 			color: #000;
 		}
 		
-		#villain_scenario_checklist, #villain_scenario_checklist_legend, #hero_scenario_checklist, #hero_aspect_summary {
+		#villain_scenario_checklist, #villain_scenario_checklist_legend, #hero_scenario_checklist, #hero_aspect_summary, #sw_scenario_checklist {
 			border-collapse: collapse;
 			margin: auto;
 		    border: solid 2px;
@@ -116,7 +116,7 @@
 		th.expert, td.wr_exp {
 			background-color: #cccccc;
 		}
-		td.aggression, td.justice, td.leadership, td.protection, td.wr_header, td.wr_std, td.wr_exp {
+		td.aggression, td.justice, td.leadership, td.protection, td.wr_header, td.wr_std, td.wr_exp, td.justiceagression, td.leadershipaggression, td.protectionaggression, td.justiceleadership, td.justiceprotection, td.leadershipprotection {
 			font-weight: bold;
 		}
 		td.aggression {
@@ -131,6 +131,24 @@
 		td.justice {
 			background-color: #f1c232;
 		}
+		td.justiceprotection {
+			background: linear-gradient(45deg, #f1c232 20%, #5bbc30);
+		}
+		td.justiceleadership {
+			background: linear-gradient(45deg, #f1c232 20%, #3c78d8);
+		}
+		td.justiceagression {
+			background: linear-gradient(45deg, #f1c232 20%, #c00);
+		}
+		td.leadershipprotection {
+			background: linear-gradient(45deg, #3c78d8 20%, #5bbc30);
+		}
+		td.leadershipaggression {
+			background: linear-gradient(45deg, #3c78d8 20%, #c00);
+		}
+		td.protectionaggression {
+			background: linear-gradient(45deg, #5bbc30 20%, #c00);
+		}
 		td.won {
 			background-color: #47c9a2;
 		}
@@ -144,14 +162,14 @@
 			background-color: #dbefdc;
 		}
 		
-		#villain_scenario_checklist td.won, #villain_scenario_checklist td.lost, #hero_scenario_checklist td.won, #hero_scenario_checklist td.lost, td.tot_wr {
+		#villain_scenario_checklist td.won, #villain_scenario_checklist td.lost, #hero_scenario_checklist td.won, #hero_scenario_checklist td.lost, td.tot_wr, #sw_scenario_checklist td.won, #sw_scenario_checklist td.lost {
 			font-style: italic;
 			font-size: smaller;
 		}
-		#villain_scenario_checklist td.won, #hero_scenario_checklist td.won {
+		#villain_scenario_checklist td.won, #hero_scenario_checklist td.won, #sw_scenario_checklist td.won {
 			color: teal;
 		}
-		#villain_scenario_checklist td.lost, #hero_scenario_checklist td.lost {
+		#villain_scenario_checklist td.lost, #hero_scenario_checklist td.lost, #sw_scenario_checklist td.lost {
 			color: brown;
 		}
 	</style>
@@ -195,6 +213,26 @@
 			</tr>
 			<tbody>
 		</table>
+		<table id="sw_scenario_checklist"style="display:none;">
+			<tbody>
+			<tr>
+				<th rowspan="3">Méchants</th>
+				<th rowspan="3">Combats</th>
+				<th colspan="6" class="standard">Standard</th>
+				<th colspan="6" class="expert">Expert</th>
+				<th colspan="3" class="standard">Win rate</th>
+			</tr>
+			<tr>
+				<td class="justiceprotection">J./P.</td><td class="justiceleadership">J./C.</td><td class="justiceagression">J./A.</td><td class="leadershipprotection">C./P.</td><td class="leadershipaggression">C./A.</td><td class="protectionaggression">P./A.</td>
+				<td class="justiceprotection">J./P.</td><td class="justiceleadership">J./C.</td><td class="justiceagression">J./A.</td><td class="leadershipprotection">C./P.</td><td class="leadershipaggression">C./A.</td><td class="protectionaggression">P./A.</td>
+				<td rowspan="2" class="wr_header">Tot.</td><td rowspan="2" class="wr_header">Standard</td><td rowspan="2" class="wr_header">Expert</td>
+			</tr>
+			<tr>
+				<td class="justiceprotection" id="justprotstdh"></td><td class="justiceleadership" id="justleadstdh"></td><td class="justiceagression" id="justaggstdh"></td><td class="leadershipprotection" id="leadprotstdh"></td><td class="leadershipaggression" id="leadaggstdh"></td><td class="protectionaggression" id="protaggstdh"></td>
+				<td class="justiceprotection" id="justprotexph"></td><td class="justiceleadership" id="justleadexph"></td><td class="justiceagression" id="justaggexph"></td><td class="leadershipprotection" id="leadprotexph"></td><td class="leadershipaggression" id="leadaggexph"></td><td class="protectionaggression" id="protaggexph"></td>
+			</tr>
+			<tbody>
+		</table>
 		<br /><br />
 		<table id="hero_aspect_summary"style="display:none;">
 			<tbody>
@@ -233,7 +271,7 @@
 		<table id="villain_scenario_checklist"style="display:none;">
 			<tbody>
 			<tr>
-				<th rowspan="3">Héros</th>
+				<th rowspan="3">Héros*</th>
 				<th rowspan="3">Combats</th>
 				<th colspan="4" class="standard">Standard</th>
 				<th colspan="4" class="expert">Expert</th>
@@ -253,6 +291,9 @@
 		<table id="villain_scenario_checklist_legend" style="display:none; margin-top:1em;">
 			<caption>Légende</caption>
 			<tbody>
+			<tr>
+				<td><b>*</b></td><td>A cause de ses 2 aspects, Spider-Woman n'est pas affichée dans ce tableau, utilisez son tableau de héros à la place.</td>
+			</tr>
 			<tr>
 				<td class="won"><img src="./images/won.png" /></td><td class="won">Ce <span id="span_won_type">scénario</span> a été gagné au moins une fois avec ce héros dans ce mode et avec cet aspect.</td>
 			</tr>

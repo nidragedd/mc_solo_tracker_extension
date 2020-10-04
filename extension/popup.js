@@ -18,6 +18,12 @@ villain_id
 var per_villain_table = {};
 var per_hero_table = {};
 
+var cst_aspects_pop = ['leadership', 'justice', 'aggression', 'protection'];
+var cst_modes_pop = ['standard', 'expert'];
+// Handle the specificity of SpiderWoman who has 2 aspects
+var cst_sw_aspects_pop = ['justiceprotection', 'justiceleadership', 'justiceagression', 'leadershipprotection', 'leadershipaggression', 'protectionaggression'];
+
+
 function load_from_storage() {
 	console.log('Loading from chrome.storage...');
 	
@@ -84,9 +90,12 @@ function add_hero_row(table_id, vals, row_id, stats_per_aspect, win_rate_per_her
 	href_anchor_link = "#heroes_anchors";
 	href_class = "a_hero_anchor_v";
 	var td_ids = ["agstd", "leadstd", "juststd", "protstd", "agexp", "leadexp", "justexp", "protexp"];
-	if (table_id == 'hero_scenario_checklist') {
+	if (table_id == 'hero_scenario_checklist' || table_id == 'sw_scenario_checklist') {
 		img_path = 'villains';
 		td_ids = ["agstdh", "leadstdh", "juststdh", "protstdh", "agexph", "leadexph", "justexph", "protexph"];
+		if (table_id == 'sw_scenario_checklist') {
+			td_ids = ["justprotstdh", "justleadstdh", "justaggstdh", "leadprotstdh", "leadaggstdh", "protaggstdh", "justprotexph", "justleadexph", "justaggexph", "leadprotexph", "leadaggexph", "protaggexph"];
+		}
 		a_id_begin = "vid_";
 		href_anchor_link = "#villains_anchors";
 		href_class = "a_villain_anchor_h";
@@ -146,11 +155,15 @@ function add_hero_row(table_id, vals, row_id, stats_per_aspect, win_rate_per_her
 	}
 	
 	// Handle total win rates if hero table list (todo later: same for villains)
-	if (table_id == 'hero_scenario_checklist') {
+	if (table_id == 'hero_scenario_checklist' || table_id == 'sw_scenario_checklist') {
 		for (var m=0; m < 3; m++) {
 			wr_counter++;
 			var new_cell = new_row.insertCell(idx);
-			new_txt = document.createTextNode(win_rate_per_hero[wr_counter] + "%");
+			val_wr = win_rate_per_hero[wr_counter];
+			if (val_wr != 'N/A') {
+				val_wr += "%";
+			}
+			new_txt = document.createTextNode(val_wr);
 			new_cell.setAttribute("class", "tot_wr");
 			new_cell.appendChild(new_txt);
 			idx++;
@@ -163,7 +176,7 @@ function add_hero_row(table_id, vals, row_id, stats_per_aspect, win_rate_per_her
 	}
 	
 	// Add event listeners to react on click for those <a> elements
-	if (table_id == 'hero_scenario_checklist') {
+	if (table_id == 'hero_scenario_checklist' || table_id == 'sw_scenario_checklist') {
 		const v_anchors = document.querySelectorAll(".a_villain_anchor_h");
 		add_villains_click_listener(v_anchors);
 	} else {
@@ -181,6 +194,7 @@ function reinit_hero_table(table_id, index) {
 	while (table_ref.rows.length > index) {
 		table_ref.deleteRow(index);
 	}
+	show_element(table_id, false);
 }
 
 
@@ -288,6 +302,7 @@ function add_hero_click_listener(v_anchors) {
 			//Addon
 			// Empty hero table
 			reinit_hero_table('hero_scenario_checklist', 3);
+			reinit_hero_table('sw_scenario_checklist', 3);
 			reinit_hero_table('hero_aspect_summary', 2);
 			display_stats_heroes_scenario(hero_id);
 		});
@@ -376,6 +391,7 @@ function display_stats_heroes_scenario(hero_id) {
 	} else {
 		displayContent += "Ce héros n'a pas encore été joué ! En avant !";
 		show_element('hero_scenario_checklist', false);
+		show_element('sw_scenario_checklist', false);
 		show_element('hero_aspect_summary', false);
 	}
 	
@@ -400,50 +416,52 @@ function display_hero_checklist_table(villain_id, scenario_id) {
 	}
 	
 	for (const a_hero of Object.keys(heroes)) {
-		// If this hero has been played at least once against this villain + scenario
-		nb_games = root_element["heroes_count"][a_hero];
-		if (nb_games > 0) {
-			vals = [];
-			vals.push(a_hero);
-			vals.push(nb_games);
-			
-			stats_per_aspect = [];
-			win_rate_per_hero = [];
-			
-			// Get for standard per aspect, then expert
-			for (let mode of ['standard', 'expert']) {
-				for (let aspect of ['aggression', 'leadership', 'justice', 'protection']) {
-					nb_played = root_element[mode][a_hero][aspect]["counter"];
-					// Played this mode and aspect ?
-					if (nb_played > 0) {
-						won = root_element[mode][a_hero][aspect]["wins"];
-						if (won > 0) {
-							// 2 means this villain + scenario was once beaten in this mode by this hero with this aspect
-							vals.push(2);
+		if (a_hero != 'h12') { // SpiderWoman is too special to be displayed with other heroes
+			// If this hero has been played at least once against this villain + scenario
+			nb_games = root_element["heroes_count"][a_hero];
+			if (nb_games > 0) {
+				vals = [];
+				vals.push(a_hero);
+				vals.push(nb_games);
+				
+				stats_per_aspect = [];
+				win_rate_per_hero = [];
+				
+				// Get for standard per aspect, then expert
+				for (let mode of cst_modes_pop) {
+					for (let aspect of cst_aspects_pop) {
+						nb_played = root_element[mode][a_hero][aspect]["counter"];
+						// Played this mode and aspect ?
+						if (nb_played > 0) {
+							won = root_element[mode][a_hero][aspect]["wins"];
+							if (won > 0) {
+								// 2 means this villain + scenario was once beaten in this mode by this hero with this aspect
+								vals.push(2);
+							} else {
+								// 1 means this villain + scenario was played but never beaen in this mode by this hero with this aspect
+								vals.push(1);
+							}
+							
+							// Compute win rate for this hero
+							one_hero_stat = {};
+							one_hero_stat["nb_games"] = nb_played;
+							one_hero_stat["wr"] = Math.round(100 * (won/nb_played));
+							win_rate_per_hero.push(one_hero_stat);
 						} else {
-							// 1 means this villain + scenario was played but never beaen in this mode by this hero with this aspect
-							vals.push(1);
+							// 0 means this villain + scenario was never played in this mode by this hero with this aspect
+							vals.push(0);
+							win_rate_per_hero.push(0);
 						}
 						
-						// Compute win rate for this hero
-						one_hero_stat = {};
-						one_hero_stat["nb_games"] = nb_played;
-						one_hero_stat["wr"] = Math.round(100 * (won/nb_played));
-						win_rate_per_hero.push(one_hero_stat);
-					} else {
-						// 0 means this villain + scenario was never played in this mode by this hero with this aspect
-						vals.push(0);
-						win_rate_per_hero.push(0);
+						// Keep track of mode and aspect
+						stats_per_aspect.push(root_element[mode][aspect]["counter"]);
 					}
-					
-					// Keep track of mode and aspect
-					stats_per_aspect.push(root_element[mode][aspect]["counter"]);
 				}
+				row_id ++;
+				
+				// Add a row in table
+				add_hero_row('villain_scenario_checklist', vals, row_id, stats_per_aspect, win_rate_per_hero);
 			}
-			row_id ++;
-			
-			// Add a row in table
-			add_hero_row('villain_scenario_checklist', vals, row_id, stats_per_aspect, win_rate_per_hero);
 		}
 	}
 	
@@ -462,6 +480,14 @@ function display_villains_checklist_table(hero_id) {
 	row_id = 2;
 	
 	root_element = per_hero_table[hero_id];
+	aspects_to_iterate = cst_aspects_pop;
+	table_id_to_display = 'hero_scenario_checklist';
+	
+	// Handle the specificity of SpiderWoman who has 2 aspects
+	if (hero_id == 'h12') {
+		aspects_to_iterate = cst_sw_aspects_pop;
+		table_id_to_display = 'sw_scenario_checklist';
+	}
 	
 	for (const a_villain of Object.keys(villains)) {
 		// If this villain has been played at least once against this hero
@@ -475,8 +501,8 @@ function display_villains_checklist_table(hero_id) {
 			win_rate_per_villain = [];
 			
 			// Get for standard per aspect, then expert
-			for (let mode of ['standard', 'expert']) {
-				for (let aspect of ['aggression', 'leadership', 'justice', 'protection']) {
+			for (let mode of cst_modes_pop) {
+				for (let aspect of aspects_to_iterate) {
 					nb_played = root_element[a_villain][mode][aspect]["counter"];
 					// Played this mode and aspect ?
 					if (nb_played > 0) {
@@ -508,19 +534,26 @@ function display_villains_checklist_table(hero_id) {
 			
 			// Add global win rate values
 			total_wr = Math.round(100 * (root_element[a_villain]["wins"]/root_element[a_villain]["counter"]));
-			total_wr_std = Math.round(100 * (root_element[a_villain]['standard']["wins"]/root_element[a_villain]['standard']["counter"]));
-			total_wr_exp = Math.round(100 * (root_element[a_villain]['expert']["wins"]/root_element[a_villain]['expert']["counter"]));
+			total_wr_std = 'N/A';
+			total_wr_exp = 'N/A';
+			if (root_element[a_villain]['standard']["counter"] > 0) {
+				total_wr_std = Math.round(100 * (root_element[a_villain]['standard']["wins"]/root_element[a_villain]['standard']["counter"]));
+			}	
+			if (root_element[a_villain]['expert']["counter"] > 0) {
+				total_wr_exp = Math.round(100 * (root_element[a_villain]['expert']["wins"]/root_element[a_villain]['expert']["counter"]));
+			}
+			
 			win_rate_per_villain.push(total_wr);
 			win_rate_per_villain.push(total_wr_std);
 			win_rate_per_villain.push(total_wr_exp);
 			
 			// Add a row in table
-			add_hero_row('hero_scenario_checklist', vals, row_id, stats_per_aspect, win_rate_per_villain);
+			add_hero_row(table_id_to_display, vals, row_id, stats_per_aspect, win_rate_per_villain);
 		}
 	}
 	
 	// Show the hero tables
-	show_element('hero_scenario_checklist', true, 'inline-table');
+	show_element(table_id_to_display, true, 'inline-table');
 	handle_hero_aspect_summary(hero_id);
 }
 
@@ -532,9 +565,16 @@ function handle_hero_aspect_summary(hero_id) {
 	root_element = per_hero_table[hero_id];
 	row_id = 2;
 	aspects_fr_names = ['Aggressivité', 'Commandement', 'Justice', 'Protection'];
+	aspects_to_iterate = cst_aspects_pop;
 	aspect_counter = 0;
 	
-	for (let aspect of ['aggression', 'leadership', 'justice', 'protection']) {
+	// Handle the specificity of SpiderWoman who has 2 aspects
+	if (hero_id == 'h12') {
+		aspects_to_iterate = cst_sw_aspects_pop;
+		aspects_fr_names = ['J/P', 'J/C', 'J/A', 'C/P', 'C/A', 'P/A'];
+	}
+	
+	for (let aspect of aspects_to_iterate) {
 		nb_played = root_element[aspect]["counter"];
 		// Played this mode and aspect ?
 		if (nb_played > 0) {
@@ -549,37 +589,37 @@ function handle_hero_aspect_summary(hero_id) {
 			// Nb fights for this aspect: overall/standard/expert
 			var new_cell = new_row.insertCell(1);
 			new_txt = document.createTextNode(root_element[aspect]['standard']["counter"]);
-			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
 			new_cell.appendChild(new_txt);
 			
 			var new_cell = new_row.insertCell(2);
 			new_txt = document.createTextNode(root_element[aspect]['expert']["counter"]);
-			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
 			new_cell.appendChild(new_txt);
 			
 			var new_cell = new_row.insertCell(3);
 			new_txt = document.createTextNode(root_element[aspect]["counter"]);
-			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
 			new_cell.appendChild(new_txt);
 			
 			// Win rates for this aspect: overall/standard/expert
 			total_wr = Math.round(100 * (root_element[aspect]["wins"]/root_element[aspect]["counter"]));
-			total_wr_std = Math.round(100 * (root_element[aspect]['standard']["wins"]/root_element[aspect]['standard']["counter"]));
-			total_wr_exp = Math.round(100 * (root_element[aspect]['expert']["wins"]/root_element[aspect]['expert']["counter"]));
+			total_wr_std = 'N/A';
+			total_wr_exp = 'N/A';
+			if (root_element[aspect]['standard']["counter"] > 0) {
+				total_wr_std = Math.round(100 * (root_element[aspect]['standard']["wins"]/root_element[aspect]['standard']["counter"])) + "%";
+			}
+			if (root_element[aspect]['expert']["counter"] > 0) {
+				total_wr_exp = Math.round(100 * (root_element[aspect]['expert']["wins"]/root_element[aspect]['expert']["counter"])) + "%";
+			}
 			
 			var new_cell = new_row.insertCell(4);
-			new_txt = document.createTextNode(total_wr_std + "%");
-			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
+			new_txt = document.createTextNode(total_wr_std);
 			new_cell.appendChild(new_txt);
 			
 			var new_cell = new_row.insertCell(5);
-			new_txt = document.createTextNode(total_wr_exp + "%");
-			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
+			new_txt = document.createTextNode(total_wr_exp);
 			new_cell.appendChild(new_txt);
 			
 			var new_cell = new_row.insertCell(6);
 			new_txt = document.createTextNode(total_wr + "%");
-			//todo bonne class a mettre => new_cell.setAttribute('class', aspect);
 			new_cell.appendChild(new_txt)
 			
 			
@@ -747,7 +787,7 @@ function show_chart_villain_played_aspects(villain_id, scenario_id) {
 		root_element = root_element[scenario_id];
 	}
 	
-	for (let aspect of ['justice', 'leadership', 'aggression', 'protection']) {
+	for (let aspect of cst_aspects_pop) {
 		aspects_played_labels.push(aspect);
 		aspects_played_labels_count.push(root_element["aspects_count"][aspect]);
 	}
