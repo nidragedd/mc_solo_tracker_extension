@@ -18,7 +18,7 @@ villain_id
 var per_villain_table = {};
 var per_hero_table = {};
 
-var cst_aspects_pop = ['leadership', 'justice', 'aggression', 'protection'];
+var cst_aspects_pop = ['aggression', 'leadership', 'justice', 'protection'];
 var cst_modes_pop = ['standard', 'expert'];
 // Handle the specificity of SpiderWoman who has 2 aspects
 var cst_sw_aspects_pop = ['justiceprotection', 'justiceleadership', 'justiceagression', 'leadershipprotection', 'leadershipaggression', 'protectionaggression'];
