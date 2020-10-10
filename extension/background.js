@@ -193,11 +193,13 @@ function add_fight_in_tables(item, index) {
 	//console.log(is_win + " " + the_villain + " " + the_scenario + " " + the_mode + " " + the_aspect + " " + the_hero);
 	
 	// Update overall counters for this scenario
-	add_count(per_villain_table[the_villain][the_scenario][the_mode][the_hero][the_aspect], key_to_upd);
-	add_count(per_villain_table[the_villain][the_scenario][the_mode][the_aspect], key_to_upd);
-	add_count(per_villain_table[the_villain][the_scenario][the_mode][the_hero], key_to_upd);
-	add_count(per_villain_table[the_villain][the_scenario][the_mode], key_to_upd);
-	add_count(per_villain_table[the_villain][the_scenario], key_to_upd);
+	if (the_scenario != "") {
+		add_count(per_villain_table[the_villain][the_scenario][the_mode][the_hero][the_aspect], key_to_upd);
+		add_count(per_villain_table[the_villain][the_scenario][the_mode][the_aspect], key_to_upd);
+		add_count(per_villain_table[the_villain][the_scenario][the_mode][the_hero], key_to_upd);
+		add_count(per_villain_table[the_villain][the_scenario][the_mode], key_to_upd);
+		add_count(per_villain_table[the_villain][the_scenario], key_to_upd);
+	}
 	
 	// Per villain
 	add_count(per_villain_table[the_villain][the_mode][the_hero][the_aspect], key_to_upd);
@@ -216,8 +218,10 @@ function add_fight_in_tables(item, index) {
 	add_count(per_hero_table[the_hero][the_aspect][the_mode], key_to_upd);
 	
 	// Aspect and mode for this villain & scenario
-	per_villain_table[the_villain][the_scenario]["heroes_count"][the_hero] += 1;
-	per_villain_table[the_villain][the_scenario]["aspects_count"][the_aspect] += 1;
+	if (the_scenario != "") {
+		per_villain_table[the_villain][the_scenario]["heroes_count"][the_hero] += 1;
+		per_villain_table[the_villain][the_scenario]["aspects_count"][the_aspect] += 1;
+	}
 	per_villain_table[the_villain]["heroes_count"][the_hero] += 1;
 	per_villain_table[the_villain]["aspects_count"][the_aspect] += 1;
 }
